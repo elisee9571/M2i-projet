@@ -1,0 +1,19 @@
+version: '3.9'
+
+volumes:
+  data_storage:
+
+services:
+  db:
+    image: mysql:8.0.32-oracle
+    container_name: bdd_abstract
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: db_test
+      MYSQL_ROOT_PASSWORD: paris
+    volumes:
+      - data_storage:/var/lib/mysql
+    networks:
+      - default
