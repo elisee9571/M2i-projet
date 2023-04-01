@@ -14,20 +14,4 @@ public class AdminService {
     @Autowired
     private AdminRepository adminRepository;
 
-    public Iterable<User> getUsers() {
-        return adminRepository.findAll();
-    }
-
-    public Optional<User> getUserById(Integer id) {
-        return adminRepository.findById(id);
-    }
-
-    public User saveAdmin(User user) {
-        return adminRepository.save(user);
-    }
-
-    public void deleteUserById(Integer id) {
-        adminRepository.deleteById(id);
-    }
-
 }
