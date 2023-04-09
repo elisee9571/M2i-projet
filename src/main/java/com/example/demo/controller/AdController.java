@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,13 +10,17 @@ import com.example.demo.entity.Ad;
 import com.example.demo.service.AdService;
 
 @RestController
-@RequestMapping("/ad")
+@RequestMapping("/ads")
 public class AdController {
 
-    @Autowired
     private AdService adService;
 
-    @GetMapping("")
+    @Autowired
+    public AdController(AdService adService){
+        this.adService = adService;
+    }
+
+    @GetMapping
     public String index() {
         return "page ad";
     }

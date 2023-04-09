@@ -9,13 +9,16 @@ import com.example.demo.entity.Category;
 import com.example.demo.service.CategoryService;
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/categories")
 public class CategoryController {
 
-    @Autowired
     private CategoryService categoryService;
+    @Autowired
+    public CategoryController(CategoryService categoryService){
+        this.categoryService = categoryService;
+    }
 
-    @GetMapping("")
+    @GetMapping
     public String index() {
         return "page category";
     }
