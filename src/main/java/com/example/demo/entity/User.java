@@ -1,21 +1,18 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.example.demo.enums.Roles;
 import com.example.demo.enums.Status;
 
 @Entity
 @Table(name = "user")
 public class User {
-
-    public enum Role {
-        USER,
-        ADMIN
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,10 +25,13 @@ public class User {
     @Column(name = "lastname")
     private String lastName;
 
-    @Column(name = "email", unique = true)
+    @Column(name="pseudo", unique=true)
+    private String pseudo;
+
+    @Column(name="email", unique=true)
     private String email;
 
-    @Column(name = "phone", unique = true)
+    @Column(name="phone", unique=true)
     private Integer phone;
 
     @Column(name = "password")
@@ -54,7 +54,7 @@ public class User {
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Roles role;
 
     @Column(name = "avatar")
     private String avatar;
@@ -73,9 +73,10 @@ public class User {
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, String password, Role role) {
+    public User(String firstName, String lastName, String pseudo, String email, String password, Roles role) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.pseudo = pseudo;
         this.email = email;
         this.password = password;
         this.role = role;
@@ -100,6 +101,14 @@ public class User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getPseudo() {
+        return pseudo;
+    }
+
+    public void setPseudo(String pseudo) {
+        this.pseudo = pseudo;
     }
 
     public String getEmail() {
@@ -166,11 +175,11 @@ public class User {
         this.zipCode = zipCode;
     }
 
-    public Role getRole() {
+    public Roles getRole() {
         return role;
     }
 
-    public void setRole(Role role) {
+    public void setRole(Roles role) {
         this.role = role;
     }
 
@@ -205,5 +214,4 @@ public class User {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
 }

@@ -9,13 +9,16 @@ import com.example.demo.entity.Image;
 import com.example.demo.service.ImageService;
 
 @RestController
-@RequestMapping("/image")
+@RequestMapping("/images")
 public class ImageController {
 
-    @Autowired
     private ImageService imageService;
+    @Autowired
+    public ImageController(ImageService imageService){
+        this.imageService = imageService;
+    }
 
-    @GetMapping("")
+    @GetMapping
     public String index() {
         return "page image";
     }

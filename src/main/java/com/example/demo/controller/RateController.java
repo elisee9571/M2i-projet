@@ -9,13 +9,17 @@ import com.example.demo.entity.Rate;
 import com.example.demo.service.RateService;
 
 @RestController
-@RequestMapping("/rate")
+@RequestMapping("/rates")
 public class RateController {
 
-    @Autowired
     private RateService rateService;
 
-    @GetMapping("")
+    @Autowired
+    public RateController(RateService rateService){
+        this.rateService = rateService;
+    }
+
+    @GetMapping
     public String index() {
         return "page rate";
     }

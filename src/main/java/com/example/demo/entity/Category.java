@@ -14,10 +14,10 @@ public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
+    @Column(name="id", nullable=false)
     private Integer id;
 
-    @Column(name = "title", unique = true)
+    @Column(name="title", unique=true)
     private String title;
 
     @ManyToOne
@@ -36,7 +36,6 @@ public class Category {
     private List<AdCategory> ads;
 
     public Category() {
-        // constructeur vide nécessaire pour JPA
     }
 
     public Category(String title, Category parent) {

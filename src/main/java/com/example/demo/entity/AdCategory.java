@@ -4,26 +4,26 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "ad_category")
+@IdClass(CleAdCategory.class)
 public class AdCategory {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+    private Integer adId;
+
+    @Id
+    private Integer categoryId;
 
     @ManyToOne
+    @MapsId("id_ad")
     @JoinColumn(name = "id_ad")
     private Ad ad;
 
     @ManyToOne
+    @MapsId("id_category")
     @JoinColumn(name = "id_category")
     private Category category;
 
     public AdCategory() {
-    }
-
-    public Long getId() {
-        return id;
     }
 
     public Ad getAd() {
@@ -40,5 +40,21 @@ public class AdCategory {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public Integer getAdId() {
+        return adId;
+    }
+
+    public void setAdId(Integer adId) {
+        this.adId = adId;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
     }
 }

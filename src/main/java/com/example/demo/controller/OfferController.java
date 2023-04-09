@@ -9,13 +9,16 @@ import com.example.demo.entity.Offer;
 import com.example.demo.service.OfferService;
 
 @RestController
-@RequestMapping("/offer")
+@RequestMapping("/offers")
 public class OfferController {
 
-    @Autowired
     private OfferService offerService;
+    @Autowired
+    public OfferController(OfferService offerService){
+        this.offerService = offerService;
+    }
 
-    @GetMapping("")
+    @GetMapping
     public String index() {
         return "page offer";
     }

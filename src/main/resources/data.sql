@@ -8,6 +8,7 @@ CREATE TABLE
         id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
         firstname VARCHAR(255),
         lastname VARCHAR(100),
+        username VARCHAR(255) UNIQUE,
         email VARCHAR(255) UNIQUE,
         phone INT UNIQUE,
         password VARCHAR(255),
