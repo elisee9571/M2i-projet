@@ -19,6 +19,7 @@ public class UserPrincipalService implements UserDetailsService {
     public Optional<User> findByEmail(String email){
         return userPrincipalRepository.findByEmail(email);
     }
+
     @Override
     public UserPrincipal loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userPrincipalRepository.findByEmail(username)

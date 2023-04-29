@@ -1,26 +1,61 @@
 package com.example.demo.service;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.example.demo.enums.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
+
+import java.io.IOException;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    public User findById(Integer id){
-        return userRepository.findById(id).orElse(null);
-    }
-
-    public List<User> findAll(){
+    public Iterable<User> getUsers(){
         return userRepository.findAll();
     }
+
+    public User getUserById(Integer id){
+        return userRepository.findById(id)
+                .orElseThrow(()-> new IllegalStateException("Not found user with id: " + id));
+    }
+
+    public User create(String avatar, String firstname, String lastname, String pseudo, String email, Integer phone, String password, Roles role) {
+
+        Optional<User> pseudoAlreadyUse = userRepository.findByPseudo(pseudo);
+        Optional<User> emailAlreadyUse = userRepository.findByEmail(password);
+
+        if (pseudoAlreadyUse.isPresent()){
+            throw new IllegalStateException("Pseudo already use");
+        }
+
+        if (emailAlreadyUse.isPresent()){
+            throw new IllegalStateException("Email already use");
+        }
+
+        User user = new User(avatar, firstname, lastname, pseudo, email, phone, passwordEncoder.encode(password), role);
+
+        return userRepository.save(user);
+    }
+
+    public void deleteUser(Integer id) {
+        boolean isExist = userRepository.existsById(id);
+
+        if (!isExist){
+            throw new IllegalStateException("Category not found");
+        }
+
+        userRepository.deleteById(id);
+    }
+
+
 
 }

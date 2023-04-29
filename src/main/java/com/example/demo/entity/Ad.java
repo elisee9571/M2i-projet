@@ -1,12 +1,14 @@
 package com.example.demo.entity;
 
+import com.example.demo.enums.Currencies;
+import com.example.demo.jsonView.MyJsonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-
-import java.util.List;
 
 import com.example.demo.enums.Status;
 
@@ -16,40 +18,59 @@ public class Ad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
     private Integer id;
 
     @Column(name = "title")
+    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
     private String title;
 
     @Column(name = "content")
+    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
     private String content;
 
     @Column(name = "price")
+    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
     private Float price;
 
-    @Column(name = "status")
-    private Status status;
+    @Column(name = "currency_code")
+    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
+    private Currencies currencyCode;
 
-    @Column(name = "id_user")
-    private Integer userId;
+    @Column(name = "status")
+    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
+    private Status status;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
+    @JsonView({MyJsonView.Ad.class})
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_user", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @JoinColumn(name = "id_user")
+    @JsonView({MyJsonView.Ad.class})
     private User user;
 
-    @OneToMany(mappedBy = "ad")
-    private List<AdCategory> categories;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_category")
+    @JsonView({MyJsonView.Ad.class})
+    private Category category;
+
+    public Ad(String title, String content, Float price, Currencies currencyCode ,Status status, User user, Category category) {
+        this.title = title;
+        this.content = content;
+        this.price = price;
+        this.currencyCode = currencyCode;
+        this.status = status;
+        this.user = user;
+        this.category = category;
+    }
 
     public Ad() {
-        // default constructor
     }
 
     // getters and setters
@@ -81,20 +102,20 @@ public class Ad {
         this.price = price;
     }
 
+    public Currencies getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(Currencies currencyCode) {
+        this.currencyCode = currencyCode;
+    }
+
     public Status getStatus() {
         return status;
     }
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -121,12 +142,11 @@ public class Ad {
         this.user = user;
     }
 
-    public List<AdCategory> getCategories() {
-        return categories;
+    public Category getCategory() {
+        return category;
     }
 
-    public void setCategories(List<AdCategory> categories) {
-        this.categories = categories;
+    public void setCategory(Category category) {
+        this.category = category;
     }
-
 }

@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import com.example.demo.jsonView.MyJsonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -12,51 +14,65 @@ import com.example.demo.enums.Status;
 
 @Entity
 @Table(name = "user")
-public class User {
+public class User{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @JsonView({MyJsonView.User.class, MyJsonView.Ad.class})
     private Integer id;
 
     @Column(name = "firstname")
+    @JsonView({MyJsonView.User.class})
     private String firstName;
 
     @Column(name = "lastname")
+    @JsonView({MyJsonView.User.class})
     private String lastName;
 
-    @Column(name="pseudo", unique=true)
+    @Column(name="pseudo", unique = true)
+    @JsonView({MyJsonView.User.class, MyJsonView.Ad.class})
     private String pseudo;
 
-    @Column(name="email", unique=true)
+    @Column(name="email", unique = true)
+    @JsonView({MyJsonView.User.class})
     private String email;
 
-    @Column(name="phone", unique=true)
+    @Column(name="phone", unique = true)
+    @JsonView({MyJsonView.User.class})
     private Integer phone;
 
     @Column(name = "password")
+    @JsonView({MyJsonView.User.class})
     private String password;
 
     @Column(name = "biography")
+    @JsonView({MyJsonView.User.class})
     private String biography;
 
     @Column(name = "address")
+    @JsonView({MyJsonView.User.class})
     private String address;
 
     @Column(name = "additional_address")
+    @JsonView({MyJsonView.User.class})
     private String additionalAddress;
 
     @Column(name = "city")
+    @JsonView({MyJsonView.User.class})
     private String city;
 
     @Column(name = "zip_code")
+    @JsonView({MyJsonView.User.class})
     private Integer zipCode;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
+    @JsonView({MyJsonView.User.class})
     private Roles role;
 
     @Column(name = "avatar")
+    @JsonView({MyJsonView.User.class})
     private String avatar;
 
     @Column(name = "status")
@@ -83,8 +99,24 @@ public class User {
         this.status = Status.VISIBLE;
     }
 
+    public User(String avatar, String firstName, String lastName, String pseudo, String email, Integer phone, String password, Roles role) {
+        this.avatar = avatar;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.pseudo = pseudo;
+        this.email = email;
+        this.phone = phone;
+        this.password = password;
+        this.role = role;
+        this.status = Status.VISIBLE;
+    }
+
     public Integer getId() {
         return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -214,4 +246,5 @@ public class User {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
 }
