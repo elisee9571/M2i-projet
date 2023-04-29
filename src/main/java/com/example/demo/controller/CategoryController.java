@@ -45,7 +45,7 @@ public class CategoryController {
     public ResponseEntity<String> create(@RequestBody Category category) {
         try {
             categoryService.saveCategory(category);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>("Category created", HttpStatus.CREATED);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

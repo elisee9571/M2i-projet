@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Category;
 import com.example.demo.jsonView.MyJsonView;
 import com.example.demo.enums.Status;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -10,22 +9,22 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.demo.entity.Ad;
-import com.example.demo.service.AdService;
+import com.example.demo.entity.Product;
+import com.example.demo.service.ProductService;
 
 @Controller
-@RequestMapping("/ads")
-public class AdController {
+@RequestMapping("/products")
+public class ProductController {
 
-    private final AdService adService;
+    private final ProductService adService;
 
     @Autowired
-    public AdController(AdService adService){
+    public ProductController(ProductService adService){
         this.adService = adService;
     }
 
     @GetMapping
-    @JsonView(MyJsonView.Ad.class)
+    @JsonView(MyJsonView.Product.class)
     public ResponseEntity<?> listAd() {
         try {
             return new ResponseEntity<>(adService.getAds(), HttpStatus.OK);
@@ -35,20 +34,20 @@ public class AdController {
     }
 
     @GetMapping("/{id}")
-    @JsonView(MyJsonView.Ad.class)
+    @JsonView(MyJsonView.Product.class)
     public ResponseEntity<?> ad(@PathVariable Integer id) {
         try {
-            return new ResponseEntity<>(adService.getAdById(id), HttpStatus.OK);
+            return new ResponseEntity<>(adService.getProductById(id), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody Ad ad) {
+    public ResponseEntity<String> create(@RequestBody Product product) {
         try {
-            ad.setStatus(Status.VISIBLE);
-            adService.saveAd(ad);
+            product.setStatus(Status.VISIBLE);
+            adService.saveProduct(product);
             return new ResponseEntity<>(HttpStatus.CREATED);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -56,9 +55,9 @@ public class AdController {
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody Ad ad) {
+    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody Product product) {
         try {
-            adService.updateAd(ad, id);
+            adService.updateProduct(product, id);
             return new ResponseEntity<>("Ad updated", HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -68,7 +67,7 @@ public class AdController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Integer id) {
         try {
-            adService.deleteAd(id);
+            adService.deleteProduct(id);
             return new ResponseEntity<>("Ad deleted", HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

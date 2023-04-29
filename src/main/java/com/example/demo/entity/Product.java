@@ -13,37 +13,37 @@ import org.hibernate.annotations.UpdateTimestamp;
 import com.example.demo.enums.Status;
 
 @Entity
-@Table(name = "ad")
-public class Ad {
+@Table(name = "product")
+public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
     private Integer id;
 
     @Column(name = "title")
-    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
     private String title;
 
     @Column(name = "content")
-    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
     private String content;
 
     @Column(name = "price")
-    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
     private Float price;
 
     @Column(name = "currency_code")
-    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
     private Currencies currencyCode;
 
     @Column(name = "status")
-    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
     private Status status;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    @JsonView({MyJsonView.Ad.class})
+    @JsonView({MyJsonView.Product.class})
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
@@ -52,15 +52,15 @@ public class Ad {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "id_user")
-    @JsonView({MyJsonView.Ad.class})
+    @JsonView({MyJsonView.Product.class})
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_category")
-    @JsonView({MyJsonView.Ad.class})
+    @JsonView({MyJsonView.Product.class})
     private Category category;
 
-    public Ad(String title, String content, Float price, Currencies currencyCode ,Status status, User user, Category category) {
+    public Product(String title, String content, Float price, Currencies currencyCode ,Status status, User user, Category category) {
         this.title = title;
         this.content = content;
         this.price = price;
@@ -70,7 +70,7 @@ public class Ad {
         this.category = category;
     }
 
-    public Ad() {
+    public Product() {
     }
 
     // getters and setters

@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -41,8 +40,8 @@ public class Order {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_ad")
-    private Ad ad;
+    @JoinColumn(name = "id_product")
+    private Product product;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -115,12 +114,12 @@ public class Order {
         this.user = user;
     }
 
-    public Ad getAd() {
-        return ad;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setAd(Ad ad) {
-        this.ad = ad;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 
     public LocalDateTime getCreatedAt() {

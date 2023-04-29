@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -42,8 +41,8 @@ public class Offer {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "id_ad", referencedColumnName = "id", insertable = false, updatable = false)
-    private Ad ad;
+    @JoinColumn(name = "id_product", referencedColumnName = "id", insertable = false, updatable = false)
+    private Product product;
 
     public Offer() {
         // default constructor
@@ -111,11 +110,11 @@ public class Offer {
         this.user = user;
     }
 
-    public Ad getAd() {
-        return ad;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setAd(Ad ad) {
-        this.ad = ad;
+    public void setProduct(Product product) {
+        this.product = product;
     }
 }

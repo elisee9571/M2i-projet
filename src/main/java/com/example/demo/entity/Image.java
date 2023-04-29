@@ -10,20 +10,20 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonView({MyJsonView.Ad.class})
+    @JsonView({MyJsonView.Product.class})
     private Integer id;
 
     @Column(name = "url", unique = true)
-    @JsonView({MyJsonView.Ad.class})
+    @JsonView({MyJsonView.Product.class})
     private String url;
 
     @Column(name = "type")
-    @JsonView({MyJsonView.Ad.class})
+    @JsonView({MyJsonView.Product.class})
     private String type;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "id_ad")
-    private Ad ad;
+    @JoinColumn(name = "id_product")
+    private Product product;
 
     public Image(String url, String type) {
         this.url = url;
@@ -55,11 +55,11 @@ public class Image {
     }
 
 
-    public Ad getAd() {
-        return ad;
+    public Product getProduct() {
+        return product;
     }
 
-    public void setAd(Ad ad) {
-        this.ad = ad;
+    public void setProduct(Product ad) {
+        this.product = product;
     }
 }

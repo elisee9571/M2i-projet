@@ -15,11 +15,11 @@ public class Category implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id", nullable = false)
-    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
     private Integer id;
 
     @Column(name="title", unique = true)
-    @JsonView({MyJsonView.Ad.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
     private String title;
 
     @ManyToOne
@@ -29,7 +29,7 @@ public class Category implements Serializable {
 
     @OneToMany(mappedBy = "category")
     @JsonView({MyJsonView.Category.class})
-    private List<Ad> ads;
+    private List<Product> products;
 
     public Category(String title, Category parent) {
         this.title = title;
@@ -58,11 +58,11 @@ public class Category implements Serializable {
         this.parent = parent;
     }
 
-    public List<Ad> getAds() {
-        return ads;
+    public List<Product> getProducts() {
+        return products;
     }
 
-    public void setAds(List<Ad> ads) {
-        this.ads = ads;
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 }
