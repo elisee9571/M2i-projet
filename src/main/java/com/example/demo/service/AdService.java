@@ -9,7 +9,7 @@ import com.example.demo.entity.Ad;
 import com.example.demo.repository.AdRepository;
 
 @Service
-public class AdService {
+public class ranrAdService {
 
     @Autowired
     private AdRepository adRepository;
