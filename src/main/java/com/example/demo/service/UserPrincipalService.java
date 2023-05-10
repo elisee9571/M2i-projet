@@ -23,7 +23,7 @@ public class UserPrincipalService implements UserDetailsService {
     @Override
     public UserPrincipal loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userPrincipalRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Not found : " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur introuvable: " + username));
         return new UserPrincipal(user);
     }
 }

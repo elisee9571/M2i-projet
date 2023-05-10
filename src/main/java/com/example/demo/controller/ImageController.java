@@ -22,7 +22,7 @@ public class ImageController {
     public ResponseEntity<String> uploadImage(@RequestParam("file") MultipartFile file) {
         try {
             imageService.saveFile(file);
-            return new ResponseEntity<>("file upload",HttpStatus.OK);
+            return new ResponseEntity<>("Fichier image enregisté",HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

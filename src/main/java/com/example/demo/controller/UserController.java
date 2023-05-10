@@ -5,45 +5,45 @@ import com.example.demo.enums.Roles;
 import com.example.demo.jsonView.MyJsonView;
 import com.example.demo.service.ImageService;
 import com.example.demo.service.UserService;
+import com.example.demo.service.auth.AuthService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
+    private final AuthService authService;
     private final ImageService imageService;
 
     @Autowired
     public UserController(
-            UserService userService, ImageService imageService) {
+            UserService userService, AuthService authService, ImageService imageService) {
         this.userService = userService;
+        this.authService = authService;
         this.imageService = imageService;
     }
 
     @PostMapping
     public ResponseEntity<String> create(@RequestBody User user) {
         try {
-            userService.create(user.getAvatar(),
-                    user.getFirstName(),
+            authService.register(user.getFirstName(),
                     user.getLastName(),
                     user.getPseudo(),
                     user.getEmail(),
-                    user.getPhone(),
                     user.getPassword(),
-                    Roles.USER);
-            return new ResponseEntity<>("Account create", HttpStatus.CREATED);
+                    Roles.ROLE_ADMIN);
+            return new ResponseEntity<>("Compte crée", HttpStatus.CREATED);
         }
         catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
+
 
     @GetMapping
     @JsonView(MyJsonView.User.class)
@@ -55,11 +55,21 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{id}")
+//    @GetMapping("/{id}")
+//    @JsonView(MyJsonView.User.class)
+//    public ResponseEntity<?> user(@PathVariable Integer id) {
+//        try {
+//            return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
+//        }catch (Exception e){
+//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+//        }
+//    }
+
+    @GetMapping("/{username}")
     @JsonView(MyJsonView.User.class)
-    public ResponseEntity<?> user(@PathVariable Integer id) {
+    public ResponseEntity<?> user(@PathVariable String username) {
         try {
-            return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
+            return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -69,7 +79,7 @@ public class UserController {
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         try {
             userService.deleteUser(id);
-            return new ResponseEntity<>("User deleted", HttpStatus.OK);
+            return new ResponseEntity<>("Utilisateur supprimé", HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

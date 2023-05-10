@@ -29,7 +29,7 @@ public class ProductService {
 
     public Product getProductById(Integer id) {
         return productRepository.findById(id)
-                .orElseThrow(()-> new IllegalStateException("Not found product with id: " + id));
+                .orElseThrow(()-> new IllegalStateException("Produit introuvable avec l'id: " + id));
     }
 
     public void saveProduct(Product product) {
@@ -37,10 +37,10 @@ public class ProductService {
         Integer categoryId = product.getCategory().getId();
 
         User user = userRepository.findById(userId)
-                .orElseThrow(()-> new IllegalStateException("Not found user with id: " + userId));
+                .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'id: " + userId));
 
         Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(()-> new IllegalStateException("Not found category with id: " + categoryId));
+                .orElseThrow(()-> new IllegalStateException("Catégorie introuvable avec l'id: " + categoryId));
 
         product.setUser(user);
         product.setCategory(category);
@@ -50,7 +50,7 @@ public class ProductService {
 
     public void updateProduct(Product data, Integer id){
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalStateException("Not found product with id: " + id));
+                .orElseThrow(() -> new IllegalStateException("Produit introuvable avec l'id: " + id));
 
         if (data.getTitle() != null && data.getTitle().length() > 0 && !Objects.equals(product.getTitle(), data.getTitle())){
             product.setTitle(data.getTitle());
@@ -71,7 +71,7 @@ public class ProductService {
         boolean isExist = productRepository.existsById(id);
 
         if (!isExist){
-            throw new IllegalStateException("Product not found");
+            throw new IllegalStateException("Produit introuvable");
         }
 
         productRepository.deleteById(id);

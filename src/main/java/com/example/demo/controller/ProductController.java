@@ -58,7 +58,7 @@ public class ProductController {
     public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody Product product) {
         try {
             adService.updateProduct(product, id);
-            return new ResponseEntity<>("Ad updated", HttpStatus.OK);
+            return new ResponseEntity<>("Produit mis à jour", HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -68,7 +68,7 @@ public class ProductController {
     public ResponseEntity<String> delete(@PathVariable Integer id) {
         try {
             adService.deleteProduct(id);
-            return new ResponseEntity<>("Ad deleted", HttpStatus.OK);
+            return new ResponseEntity<>("Produit supprimé", HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

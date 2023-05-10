@@ -45,7 +45,7 @@ public class CategoryController {
     public ResponseEntity<String> create(@RequestBody Category category) {
         try {
             categoryService.saveCategory(category);
-            return new ResponseEntity<>("Category created", HttpStatus.CREATED);
+            return new ResponseEntity<>("Catégorie crée", HttpStatus.CREATED);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -55,7 +55,7 @@ public class CategoryController {
     public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody Category category) {
         try {
             categoryService.updateCategory(category, id);
-            return new ResponseEntity<>("Category updated", HttpStatus.OK);
+            return new ResponseEntity<>("Catégorie mis à jour", HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -65,7 +65,7 @@ public class CategoryController {
     public ResponseEntity<String> delete(@PathVariable Integer id) {
         try {
             categoryService.deleteCategory(id);
-            return new ResponseEntity<>("Category deleted", HttpStatus.OK);
+            return new ResponseEntity<>("Catégorie supprimé", HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

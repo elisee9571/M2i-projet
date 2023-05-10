@@ -51,8 +51,8 @@ public class AuthController {
                     user.getPseudo(),
                     user.getEmail(),
                     user.getPassword(),
-                    Roles.USER);
-            return new ResponseEntity<>("Account create", HttpStatus.CREATED);
+                    Roles.ROLE_USER);
+            return new ResponseEntity<>("Compte crée", HttpStatus.CREATED);
         }
         catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -66,7 +66,7 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
         }
         catch (BadCredentialsException e) {
-            return new ResponseEntity<>("Identified or password incorrect", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Identifiant ou mot de passe incorrect", HttpStatus.BAD_REQUEST);
         }
 
         final UserDetails userDetails = userPrincipalService.loadUserByUsername(user.getEmail());

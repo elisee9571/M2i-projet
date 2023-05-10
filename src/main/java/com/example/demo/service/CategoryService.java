@@ -22,26 +22,26 @@ public class CategoryService {
 
     public Category getCategoryById(Integer id) {
         return categoryRepository.findById(id)
-                .orElseThrow(()-> new IllegalStateException("Not found category with id: " + id));
+                .orElseThrow(()-> new IllegalStateException("Catégorie introuvable avec l'id: " + id));
     }
 
     public void saveCategory(Category category) {
         Optional<Category> optionalCategory = categoryRepository.findByTitle(category.getTitle());
         if (optionalCategory.isPresent()){
-            throw new IllegalStateException("Category already exist");
+            throw new IllegalStateException("Catégorie déjà existante");
         }
         categoryRepository.save(category);
     }
     public void updateCategory(Category data, Integer id) {
         Category category = categoryRepository.findById(id)
-                .orElseThrow(()-> new IllegalStateException("Not found category with id: " + id));
+                .orElseThrow(()-> new IllegalStateException("Catégorie introuvable avec l'id: " + id));
 
         if (data.getTitle() != null && data.getTitle().length() > 0 && !Objects.equals(category.getTitle(), data.getTitle())){
 
             Optional<Category> optionalCategory = categoryRepository.findByTitle(data.getTitle());
 
             if (optionalCategory.isPresent()){
-                throw new IllegalStateException("Title already use");
+                throw new IllegalStateException("Titre déjà utilisé");
             }
 
             category.setTitle(data.getTitle());
@@ -58,7 +58,7 @@ public class CategoryService {
         boolean isExist = categoryRepository.existsById(id);
 
         if (!isExist){
-            throw new IllegalStateException("Category not found");
+            throw new IllegalStateException("Catégorie introuvable");
         }
 
         categoryRepository.deleteById(id);

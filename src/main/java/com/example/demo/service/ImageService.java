@@ -36,7 +36,7 @@ public class ImageService {
     }
 
     public void saveFile(MultipartFile file) throws IOException {
-        if (file.isEmpty()) throw new IllegalStateException("file required");
+        if (file.isEmpty()) throw new IllegalStateException("Fichier image requis");
 
         Path uploadPath = Paths.get(uploadDir);
         String fileName = UUID.randomUUID().toString() + "-" + file.getOriginalFilename();
@@ -53,7 +53,7 @@ public class ImageService {
             imageRepository.save(image);
 
         } catch (IOException ioe) {
-            throw new IOException("Could not save image file: " + fileName, ioe);
+            throw new IOException("Impossible d'enregistrer le fichier image: " + fileName, ioe);
         }
     }
 

@@ -29,11 +29,11 @@ public class AuthService {
         Optional<User> emailAlreadyUse = userRepository.findByEmail(email);
 
         if (pseudoAlreadyUse.isPresent()){
-            throw new IllegalStateException("Pseudo already use");
+            throw new IllegalStateException("Pseudo déjà utilisé");
         }
 
         if (emailAlreadyUse.isPresent()){
-            throw new IllegalStateException("Email already use");
+            throw new IllegalStateException("Email déjà utilisé");
         }
 
         User user = new User(firstname, lastname, pseudo, email, passwordEncoder.encode(password), role);

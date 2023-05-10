@@ -25,7 +25,12 @@ public class UserService {
 
     public User getUserById(Integer id){
         return userRepository.findById(id)
-                .orElseThrow(()-> new IllegalStateException("Not found user with id: " + id));
+                .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'id: " + id));
+    }
+
+    public User getUserByUsername(String username){
+        return userRepository.findByEmail(username)
+                .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'email: " + username));
     }
 
     public User create(String avatar, String firstname, String lastname, String pseudo, String email, Integer phone, String password, Roles role) {
@@ -34,11 +39,11 @@ public class UserService {
         Optional<User> emailAlreadyUse = userRepository.findByEmail(password);
 
         if (pseudoAlreadyUse.isPresent()){
-            throw new IllegalStateException("Pseudo already use");
+            throw new IllegalStateException("Pseudo déjà utilisé");
         }
 
         if (emailAlreadyUse.isPresent()){
-            throw new IllegalStateException("Email already use");
+            throw new IllegalStateException("Email déjà utilisé");
         }
 
         User user = new User(avatar, firstname, lastname, pseudo, email, phone, passwordEncoder.encode(password), role);
@@ -50,7 +55,7 @@ public class UserService {
         boolean isExist = userRepository.existsById(id);
 
         if (!isExist){
-            throw new IllegalStateException("Category not found");
+            throw new IllegalStateException("Catégorie introuvable");
         }
 
         userRepository.deleteById(id);
