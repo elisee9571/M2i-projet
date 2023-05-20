@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @Service

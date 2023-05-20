@@ -31,8 +31,8 @@ public class UserController {
     @PostMapping
     public ResponseEntity<String> create(@RequestBody User user) {
         try {
-            authService.register(user.getFirstName(),
-                    user.getLastName(),
+            authService.register(user.getFirstname(),
+                    user.getLastname(),
                     user.getPseudo(),
                     user.getEmail(),
                     user.getPassword(),

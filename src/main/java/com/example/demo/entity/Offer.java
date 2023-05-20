@@ -22,12 +22,6 @@ public class Offer {
     @Column(name = "status")
     private Status status;
 
-    @Column(name = "id_user")
-    private Integer userId;
-
-    @Column(name = "id_ad")
-    private Integer adId;
-
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -68,22 +62,6 @@ public class Offer {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getAdId() {
-        return adId;
-    }
-
-    public void setAdId(Integer adId) {
-        this.adId = adId;
     }
 
     public LocalDateTime getCreatedAt() {

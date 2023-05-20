@@ -46,13 +46,13 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<String> registration(@RequestBody User user) {
         try {
-            authService.register(user.getFirstName(),
-                    user.getLastName(),
+            authService.register(user.getFirstname(),
+                    user.getLastname(),
                     user.getPseudo(),
                     user.getEmail(),
                     user.getPassword(),
                     Roles.ROLE_USER);
-            return new ResponseEntity<>("Compte crée", HttpStatus.CREATED);
+            return new ResponseEntity<>("Inscription réussi", HttpStatus.CREATED);
         }
         catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

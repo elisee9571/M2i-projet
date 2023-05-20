@@ -24,18 +24,18 @@ public class User{
 
     @Column(name = "firstname")
     @JsonView({MyJsonView.User.class})
-    private String firstName;
+    private String firstname;
 
     @Column(name = "lastname")
     @JsonView({MyJsonView.User.class})
-    private String lastName;
+    private String lastname;
 
     @Column(name="pseudo", unique = true)
     @JsonView({MyJsonView.User.class, MyJsonView.Product.class})
     private String pseudo;
 
     @Column(name="email", unique = true)
-    @JsonView({MyJsonView.User.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class})
     private String email;
 
     @Column(name="phone", unique = true)
@@ -89,9 +89,9 @@ public class User{
     public User() {
     }
 
-    public User(String firstName, String lastName, String pseudo, String email, String password, Roles role) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String firstname, String lastname, String pseudo, String email, String password, Roles role) {
+        this.firstname = firstname;
+        this.lastname = lastname;
         this.pseudo = pseudo;
         this.email = email;
         this.password = password;
@@ -99,10 +99,10 @@ public class User{
         this.status = Status.VISIBLE;
     }
 
-    public User(String avatar, String firstName, String lastName, String pseudo, String email, Integer phone, String password, Roles role) {
+    public User(String avatar, String firstname, String lastname, String pseudo, String email, Integer phone, String password, Roles role) {
         this.avatar = avatar;
-        this.firstName = firstName;
-        this.lastName = lastName;
+        this.firstname = firstname;
+        this.lastname = lastname;
         this.pseudo = pseudo;
         this.email = email;
         this.phone = phone;
@@ -119,20 +119,20 @@ public class User{
         this.id = id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public String getPseudo() {
