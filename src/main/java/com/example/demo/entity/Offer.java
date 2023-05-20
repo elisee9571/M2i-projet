@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import com.example.demo.jsonView.MyJsonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -14,12 +16,15 @@ public class Offer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @JsonView({MyJsonView.Offer.class, MyJsonView.Product.class})
     private Integer id;
 
     @Column(name = "amount")
+    @JsonView({MyJsonView.Offer.class, MyJsonView.Product.class})
     private Float amount;
 
     @Column(name = "status")
+    @JsonView({MyJsonView.Offer.class, MyJsonView.Product.class})
     private Status status;
 
     @CreationTimestamp
@@ -30,19 +35,19 @@ public class Offer {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "id_user", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_user")
+    @JsonView({MyJsonView.Offer.class, MyJsonView.Product.class})
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "id_product", referencedColumnName = "id", insertable = false, updatable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_product")
+    @JsonView({MyJsonView.Offer.class})
     private Product product;
 
     public Offer() {
         // default constructor
     }
-
-    // getters and setters
 
     public Integer getId() {
         return id;

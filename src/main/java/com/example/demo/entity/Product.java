@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -18,11 +20,11 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class})
     private Integer id;
 
     @Column(name = "title")
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class})
     private String title;
 
     @Column(name = "content")
@@ -30,7 +32,7 @@ public class Product {
     private String content;
 
     @Column(name = "price")
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class})
     private Float price;
 
     @Column(name = "currency_code")
@@ -38,7 +40,7 @@ public class Product {
     private Currencies currencyCode;
 
     @Column(name = "status")
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class})
     private Status status;
 
     @CreationTimestamp
@@ -48,6 +50,7 @@ public class Product {
 
     @UpdateTimestamp
     @Column(name = "updated_at", nullable = false)
+    @JsonView({MyJsonView.Product.class})
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -59,6 +62,10 @@ public class Product {
     @JoinColumn(name = "id_category")
     @JsonView({MyJsonView.Product.class})
     private Category category;
+
+    @OneToMany(mappedBy = "product")
+    @JsonView({MyJsonView.Product.class})
+    private List<Offer> offers = new ArrayList<>();
 
     public Product(String title, String content, Float price, Currencies currencyCode ,Status status, User user, Category category) {
         this.title = title;
@@ -148,5 +155,13 @@ public class Product {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public List<Offer> getOffers() {
+        return offers;
+    }
+
+    public void setOffers(List<Offer> offers) {
+        this.offers = offers;
     }
 }

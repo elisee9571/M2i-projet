@@ -1,11 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.config.token.util.TokenAuthorization;
 import com.example.demo.entity.Category;
-import com.example.demo.entity.User;
 import com.example.demo.jsonView.MyJsonView;
-import com.example.demo.enums.Status;
-import com.example.demo.service.UserService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,28 +12,25 @@ import org.springframework.web.bind.annotation.*;
 import com.example.demo.entity.Product;
 import com.example.demo.service.ProductService;
 
-import java.util.Objects;
-
 @Controller
 @RequestMapping("/products")
 public class ProductController {
 
     private final ProductService productService;
-    private final UserService userService;
-    private final TokenAuthorization tokenAuthorization;
 
     @Autowired
-    public ProductController(ProductService productService, UserService userService, TokenAuthorization tokenAuthorization) {
+    public ProductController(ProductService productService) {
         this.productService = productService;
-        this.userService = userService;
-        this.tokenAuthorization = tokenAuthorization;
     }
 
     @GetMapping
     @JsonView(MyJsonView.Product.class)
-    public ResponseEntity<?> listProducts() {
+    public ResponseEntity<?> listProducts(
+            @RequestParam("page") Integer pageNumber,
+            @RequestParam("size") Integer pageSize
+    ) {
         try {
-            return new ResponseEntity<>(productService.getProducts(), HttpStatus.OK);
+            return new ResponseEntity<>(productService.getProducts(pageNumber, pageSize), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -55,9 +48,13 @@ public class ProductController {
 
     @GetMapping("/user/{pseudo}")
     @JsonView(MyJsonView.Product.class)
-    public ResponseEntity<?> listProductsByUser(@PathVariable String pseudo) {
+    public ResponseEntity<?> listProductsByUser(
+            @PathVariable String pseudo,
+            @RequestParam("page") Integer pageNumber,
+            @RequestParam("size") Integer pageSize
+    ) {
         try {
-            return new ResponseEntity<>(productService.getProductsByUser(pseudo), HttpStatus.OK);
+            return new ResponseEntity<>(productService.getProductsByUser(pseudo, pageNumber, pageSize), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -97,9 +94,13 @@ public class ProductController {
     @JsonView(MyJsonView.Product.class)
     public ResponseEntity<?> searchProducts(
             @RequestParam(value = "category", required = false) Category category,
-            @RequestParam("keyword") String keyword) {
+            @RequestParam("keyword") String keyword,
+            @RequestParam(value = "price", required = false) String price,
+            @RequestParam("page") Integer pageNumber,
+            @RequestParam("size") Integer pageSize
+    ) {
         try {
-            return new ResponseEntity<>(productService.searchProductsByCategoryAndKeyword(category, keyword), HttpStatus.OK);
+            return new ResponseEntity<>(productService.searchProductsByCategoryAndKeyword(category, keyword, price, pageNumber, pageSize), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

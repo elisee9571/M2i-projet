@@ -31,19 +31,20 @@ public class UserController {
     @PostMapping
     public ResponseEntity<String> create(@RequestBody User user) {
         try {
-            authService.register(user.getFirstname(),
+            authService.register(
+                    user.getFirstname(),
                     user.getLastname(),
                     user.getPseudo(),
                     user.getEmail(),
                     user.getPassword(),
-                    Roles.ROLE_ADMIN);
+                    user.getRole()
+            );
             return new ResponseEntity<>("Compte crée", HttpStatus.CREATED);
         }
         catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
 
     @GetMapping
     @JsonView(MyJsonView.User.class)
@@ -54,16 +55,6 @@ public class UserController {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
-
-//    @GetMapping("/{id}")
-//    @JsonView(MyJsonView.User.class)
-//    public ResponseEntity<?> user(@PathVariable Integer id) {
-//        try {
-//            return new ResponseEntity<>(userService.getUserById(id), HttpStatus.OK);
-//        }catch (Exception e){
-//            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-//        }
-//    }
 
     @GetMapping("/{username}")
     @JsonView(MyJsonView.User.class)

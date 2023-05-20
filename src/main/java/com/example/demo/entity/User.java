@@ -19,7 +19,7 @@ public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class})
     private Integer id;
 
     @Column(name = "firstname")
@@ -31,11 +31,11 @@ public class User{
     private String lastname;
 
     @Column(name="pseudo", unique = true)
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class})
     private String pseudo;
 
     @Column(name="email", unique = true)
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class})
     private String email;
 
     @Column(name="phone", unique = true)
