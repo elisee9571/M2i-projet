@@ -20,11 +20,11 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
     private Integer id;
 
     @Column(name = "title")
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
     private String title;
 
     @Column(name = "content")
@@ -32,7 +32,7 @@ public class Product {
     private String content;
 
     @Column(name = "price")
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
     private Float price;
 
     @Column(name = "currency_code")
@@ -66,6 +66,10 @@ public class Product {
     @OneToMany(mappedBy = "product")
     @JsonView({MyJsonView.Product.class})
     private List<Offer> offers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "product")
+    @JsonView({MyJsonView.Product.class})
+    private List<Favorite> favorites;
 
     public Product(String title, String content, Float price, Currencies currencyCode ,Status status, User user, Category category) {
         this.title = title;
@@ -163,5 +167,13 @@ public class Product {
 
     public void setOffers(List<Offer> offers) {
         this.offers = offers;
+    }
+
+    public List<Favorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<Favorite> favorites) {
+        this.favorites = favorites;
     }
 }

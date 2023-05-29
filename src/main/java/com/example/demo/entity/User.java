@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -19,7 +20,7 @@ public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
     private Integer id;
 
     @Column(name = "firstname")
@@ -31,11 +32,11 @@ public class User{
     private String lastname;
 
     @Column(name="pseudo", unique = true)
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
     private String pseudo;
 
     @Column(name="email", unique = true)
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
     private String email;
 
     @Column(name="phone", unique = true)
@@ -86,6 +87,9 @@ public class User{
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "user")
+    private List<Favorite> favorites;
+
     public User() {
     }
 
@@ -113,10 +117,6 @@ public class User{
 
     public Integer getId() {
         return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getFirstname() {
@@ -247,4 +247,11 @@ public class User{
         this.updatedAt = updatedAt;
     }
 
+    public List<Favorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<Favorite> favorites) {
+        this.favorites = favorites;
+    }
 }

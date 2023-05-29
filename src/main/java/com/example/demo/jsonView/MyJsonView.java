@@ -3,6 +3,7 @@ package com.example.demo.jsonView;
 
 public class MyJsonView {
     public static class Product{};
+    public static class Favorite{};
     public static class Category{};
     public static class Image{};
     public static class Offer{};
