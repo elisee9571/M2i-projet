@@ -9,13 +9,16 @@ import com.example.demo.entity.Order;
 import com.example.demo.service.OrderService;
 
 @RestController
-@RequestMapping("/order")
+@RequestMapping("/orders")
 public class OrderController {
 
-    @Autowired
     private OrderService orderService;
+    @Autowired
+    public OrderController(OrderService orderService){
+        this.orderService = orderService;
+    }
 
-    @GetMapping("")
+    @GetMapping
     public String index() {
         return "page order";
     }

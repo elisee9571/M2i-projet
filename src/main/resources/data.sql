@@ -8,6 +8,7 @@ CREATE TABLE
         id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
         firstname VARCHAR(255),
         lastname VARCHAR(100),
+        username VARCHAR(255) UNIQUE,
         email VARCHAR(255) UNIQUE,
         phone INT UNIQUE,
         password VARCHAR(255),
@@ -73,23 +74,23 @@ CREATE TABLE
         FOREIGN KEY (id_ad) REFERENCES ad(id) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
-CREATE TABLE
-    IF NOT EXISTS `category` (
-        id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-        title VARCHAR(255) UNIQUE,
-        id_parent INT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    ) ENGINE = InnoDB;
-
-CREATE TABLE
-    IF NOT EXISTS `ad_category` (
-        id_ad INT,
-        id_category INT,
-        PRIMARY KEY (id_ad, id_category),
-        FOREIGN KEY (id_category) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE,
-        FOREIGN KEY (id_ad) REFERENCES ad(id) ON DELETE CASCADE ON UPDATE CASCADE
-    ) ENGINE = InnoDB;
+--CREATE TABLE
+--    IF NOT EXISTS `category` (
+--        id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+--        title VARCHAR(255) UNIQUE,
+--        id_parent INT,
+--        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+--        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+--    ) ENGINE = InnoDB;
+--
+--CREATE TABLE
+--    IF NOT EXISTS `ad_category` (
+--        id_ad INT,
+--        id_category INT,
+--        PRIMARY KEY (id_ad, id_category),
+--        FOREIGN KEY (id_category) REFERENCES category(id) ON DELETE CASCADE ON UPDATE CASCADE,
+--        FOREIGN KEY (id_ad) REFERENCES ad(id) ON DELETE CASCADE ON UPDATE CASCADE
+--    ) ENGINE = InnoDB;
 
 CREATE TABLE
     IF NOT EXISTS `orders` (

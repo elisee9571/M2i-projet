@@ -30,4 +30,7 @@ public class RateService {
         rateRepository.deleteById(id);
     }
 
+
+
+
 }

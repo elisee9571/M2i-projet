@@ -5,9 +5,10 @@ public enum Status {
     BLOCKED,
     DRAFT,
     ACCEPTED,
-    REFUSED,
+    REJECTED,
+    PENDING,
     SOLD,
     CANCELLED,
-    IN_PROGRESS,
+
     FINISH
 }

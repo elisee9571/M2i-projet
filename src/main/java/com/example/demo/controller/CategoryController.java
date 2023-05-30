@@ -1,23 +1,74 @@
 package com.example.demo.controller;
 
+import com.example.demo.jsonView.MyJsonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.Category;
 import com.example.demo.service.CategoryService;
 
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/categories")
 public class CategoryController {
 
-    @Autowired
-    private CategoryService categoryService;
+    private final CategoryService categoryService;
 
-    @GetMapping("")
-    public String index() {
-        return "page category";
+    @Autowired
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
+
+    @GetMapping
+    @JsonView(MyJsonView.Category.class)
+    public ResponseEntity<?> listCategory() {
+        try {
+            return new ResponseEntity<>(categoryService.getCategories(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/{id}")
+    @JsonView(MyJsonView.Category.class)
+    public ResponseEntity<?> category(@PathVariable Integer id) {
+        try {
+            return new ResponseEntity<>(categoryService.getCategoryById(id), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<String> create(@RequestBody Category category) {
+        try {
+            categoryService.saveCategory(category);
+            return new ResponseEntity<>("Catégorie crée", HttpStatus.CREATED);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<String> update(@PathVariable Integer id, @RequestBody Category category) {
+        try {
+            categoryService.updateCategory(category, id);
+            return new ResponseEntity<>("Catégorie mis à jour", HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable Integer id) {
+        try {
+            categoryService.deleteCategory(id);
+            return new ResponseEntity<>("Catégorie supprimé", HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

@@ -1,41 +1,79 @@
 package com.example.demo.controller;
 
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.example.demo.entity.User;
+import com.example.demo.enums.Roles;
+import com.example.demo.jsonView.MyJsonView;
+import com.example.demo.service.ImageService;
 import com.example.demo.service.UserService;
+import com.example.demo.service.auth.AuthService;
+import com.fasterxml.jackson.annotation.JsonView;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
+    private final UserService userService;
+    private final AuthService authService;
+    private final ImageService imageService;
+
     @Autowired
-    private UserService userService;
-
-    @GetMapping("")
-    public String index() {
-        return "page user";
+    public UserController(
+            UserService userService, AuthService authService, ImageService imageService) {
+        this.userService = userService;
+        this.authService = authService;
+        this.imageService = imageService;
     }
 
-    @GetMapping("/index")
-    public Iterable<User> getUsers() {
-        return userService.getUsers();
+    @PostMapping
+    public ResponseEntity<String> create(@RequestBody User user) {
+        try {
+            authService.register(
+                    user.getFirstname(),
+                    user.getLastname(),
+                    user.getPseudo(),
+                    user.getEmail(),
+                    user.getPassword(),
+                    user.getRole()
+            );
+            return new ResponseEntity<>("Compte crée", HttpStatus.CREATED);
+        }
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable("id") Integer id) {
-        return userService.getUserById(id);
+    @GetMapping
+    @JsonView(MyJsonView.User.class)
+    public ResponseEntity<?> users() {
+        try {
+            return new ResponseEntity<>(userService.getUsers(), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @PostMapping("/post")
-    public User saveUser() {
-        return userService.saveUser(new User("User", "Doe", "user@gmail.com", "password", User.Role.USER));
+    @GetMapping("/{username}")
+    @JsonView(MyJsonView.User.class)
+    public ResponseEntity<?> user(@PathVariable String username) {
+        try {
+            return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id) {
+        try {
+            userService.deleteUser(id);
+            return new ResponseEntity<>("Utilisateur supprimé", HttpStatus.OK);
+        }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }
