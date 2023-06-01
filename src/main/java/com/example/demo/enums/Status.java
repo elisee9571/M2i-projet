@@ -9,6 +9,5 @@ public enum Status {
     PENDING,
     SOLD,
     CANCELLED,
-
     FINISH
 }
