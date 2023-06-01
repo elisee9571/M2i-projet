@@ -71,6 +71,6 @@ public class AuthController {
 
         final UserDetails userDetails = userPrincipalService.loadUserByUsername(user.getEmail());
 
-        return new ResponseEntity<>(jwtUtil.generateToken(userDetails), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(jwtUtil.generateToken(userDetails), HttpStatus.OK);
     }
 }
