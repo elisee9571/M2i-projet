@@ -41,7 +41,7 @@ public class User{
 
     @Column(name="phone", unique = true)
     @JsonView({MyJsonView.User.class})
-    private Integer phone;
+    private String phone;
 
     @Column(name = "password")
     @JsonView({MyJsonView.User.class})
@@ -65,7 +65,7 @@ public class User{
 
     @Column(name = "zip_code")
     @JsonView({MyJsonView.User.class})
-    private Integer zipCode;
+    private String zipCode;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
@@ -103,7 +103,7 @@ public class User{
         this.status = Status.VISIBLE;
     }
 
-    public User(String avatar, String firstname, String lastname, String pseudo, String email, Integer phone, String password, Roles role) {
+    public User(String avatar, String firstname, String lastname, String pseudo, String email, String phone, String password, Roles role) {
         this.avatar = avatar;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -113,6 +113,22 @@ public class User{
         this.password = password;
         this.role = role;
         this.status = Status.VISIBLE;
+    }
+
+    public User(String firstname, String lastname, String pseudo, String email, String phone, String password, String biography, String address, String additionalAddress, String city, String zipCode, Roles role, String avatar) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.pseudo = pseudo;
+        this.email = email;
+        this.phone = phone;
+        this.password = password;
+        this.biography = biography;
+        this.address = address;
+        this.additionalAddress = additionalAddress;
+        this.city = city;
+        this.zipCode = zipCode;
+        this.role = role;
+        this.avatar = avatar;
     }
 
     public Integer getId() {
@@ -151,11 +167,11 @@ public class User{
         this.email = email;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -199,11 +215,11 @@ public class User{
         this.city = city;
     }
 
-    public Integer getZipCode() {
+    public String getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(Integer zipCode) {
+    public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 

@@ -35,9 +35,6 @@ public class OfferService {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private ProductService productService;
-
     public List<Offer> getOffers() {
         return offerRepository.findAll();
     }

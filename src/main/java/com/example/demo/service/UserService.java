@@ -32,7 +32,7 @@ public class UserService {
                 .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'email: " + username));
     }
 
-    public User create(String avatar, String firstname, String lastname, String pseudo, String email, Integer phone, String password, Roles role) {
+    public User create(String avatar, String firstname, String lastname, String pseudo, String email, String phone, String password, Roles role) {
 
         Optional<User> pseudoAlreadyUse = userRepository.findByPseudo(pseudo);
         Optional<User> emailAlreadyUse = userRepository.findByEmail(password);
