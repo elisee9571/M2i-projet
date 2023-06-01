@@ -21,14 +21,14 @@ import org.springframework.web.cors.CorsConfiguration;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    @Autowired
-    private UserPrincipalService userPrincipalService;
+
+    private final UserPrincipalService userPrincipalService;
+
+    private final JwtRequestFilter jwtRequestFilter;
 
     @Autowired
-    private JwtRequestFilter jwtRequestFilter;
-
-    @Autowired
-    public SecurityConfig(JwtRequestFilter jwtRequestFilter) {
+    public SecurityConfig(UserPrincipalService userPrincipalService, JwtRequestFilter jwtRequestFilter) {
+        this.userPrincipalService = userPrincipalService;
         this.jwtRequestFilter = jwtRequestFilter;
     }
 
