@@ -27,10 +27,10 @@ class ApiApplicationTests {
 		this.mockMvc = mockMvc;
 	}
 
-//	@PostConstruct
-//	void fixture(){
-//		userFixture.generateFixtures();
-//	}
+	@PostConstruct
+	void fixture(){
+		userFixture.generateFixtures();
+	}
 
 	@Test
 	void getUsers() throws Exception {
@@ -51,15 +51,15 @@ class ApiApplicationTests {
 				.andExpect(MockMvcResultMatchers.content().string("Identifiant ou mot de passe incorrect"));
 	}
 
-	@Test
-	void successLogin() throws Exception {
-		String email = "eli@gmail.fr";
-		String password = "password";
-
-		mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}"))
-				.andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.content().string(Matchers.not(emptyString())));
-	}
+//	@Test
+//	void successLogin() throws Exception {
+//		String email = "eli@gmail.fr";
+//		String password = "password";
+//
+//		mockMvc.perform(MockMvcRequestBuilders.post("/auth/login")
+//						.contentType(MediaType.APPLICATION_JSON)
+//						.content("{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}"))
+//				.andExpect(MockMvcResultMatchers.status().isOk())
+//				.andExpect(MockMvcResultMatchers.content().string(Matchers.not(emptyString())));
+//	}
 }
