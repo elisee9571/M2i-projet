@@ -14,6 +14,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,35 +45,32 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> registration(@RequestBody User user) {
-        Optional<User> isExist = userPrincipalService.findByEmail(user.getEmail());
-
-        if (isExist.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        try {
+            authService.register(user.getFirstname(),
+                    user.getLastname(),
+                    user.getPseudo(),
+                    user.getEmail(),
+                    user.getPassword(),
+                    Roles.ROLE_USER);
+            return new ResponseEntity<>("Inscription réussi", HttpStatus.CREATED);
         }
-
-        authService.register(user.getFirstName(),
-                user.getLastName(),
-                user.getPseudo(),
-                user.getEmail(),
-                user.getPassword(),
-                Roles.ADMIN);
-
-        return new ResponseEntity<>("Account create", HttpStatus.CREATED);
+        catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> authentification(@RequestBody User user) {
         try {
-            Authentication authentication = authenticationManager.authenticate(
+            authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         catch (BadCredentialsException e) {
-            return new ResponseEntity<>("Identified or password incorrect", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Identifiant ou mot de passe incorrect", HttpStatus.BAD_REQUEST);
         }
 
-        final UserPrincipal userPrincipal = userPrincipalService.loadUserByUsername(user.getEmail());
+        final UserDetails userDetails = userPrincipalService.loadUserByUsername(user.getEmail());
 
-        return new ResponseEntity<>(jwtUtil.generateToken(userPrincipal), HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(jwtUtil.generateToken(userDetails), HttpStatus.OK);
     }
 }

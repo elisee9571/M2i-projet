@@ -13,10 +13,42 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>api</name>
 	<description>abstract api</description>
+
+	<profiles>
+		<profile>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<id>local</id>
+			<properties>
+				<hostname-bdd>localhost:3306</hostname-bdd>
+				<name-bdd>db_test</name-bdd>
+				<username-bdd>root</username-bdd>
+				<password-bdd>paris</password-bdd>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<hostname-bdd>localhost</hostname-bdd>
+				<name-bdd>db_prod</name-bdd>
+				<username-bdd>root</username-bdd>
+				<password-bdd>paris</password-bdd>
+			</properties>
+		</profile>
+	</profiles>
+
 	<properties>
 		<java.version>19</java.version>
+		<maven.compiler.target>19</maven.compiler.target>
+		<maven.compiler.source>19</maven.compiler.source>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>com.github.javafaker</groupId>
+			<artifactId>javafaker</artifactId>
+			<version>1.0.2</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
@@ -26,13 +58,11 @@
             <artifactId>jjwt-api</artifactId>
             <version>0.11.5</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
             <version>0.11.5</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>

@@ -1,8 +1,11 @@
 package com.example.demo.entity;
 
+import com.example.demo.jsonView.MyJsonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -12,51 +15,64 @@ import com.example.demo.enums.Status;
 
 @Entity
 @Table(name = "user")
-public class User {
-
+public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
     private Integer id;
 
     @Column(name = "firstname")
-    private String firstName;
+    @JsonView({MyJsonView.User.class})
+    private String firstname;
 
     @Column(name = "lastname")
-    private String lastName;
+    @JsonView({MyJsonView.User.class})
+    private String lastname;
 
-    @Column(name="pseudo", unique=true)
+    @Column(name="pseudo", unique = true)
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
     private String pseudo;
 
-    @Column(name="email", unique=true)
+    @Column(name="email", unique = true)
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
     private String email;
 
-    @Column(name="phone", unique=true)
-    private Integer phone;
+    @Column(name="phone", unique = true)
+    @JsonView({MyJsonView.User.class})
+    private String phone;
 
     @Column(name = "password")
+    @JsonView({MyJsonView.User.class})
     private String password;
 
     @Column(name = "biography")
+    @JsonView({MyJsonView.User.class})
     private String biography;
 
     @Column(name = "address")
+    @JsonView({MyJsonView.User.class})
     private String address;
 
     @Column(name = "additional_address")
+    @JsonView({MyJsonView.User.class})
     private String additionalAddress;
 
     @Column(name = "city")
+    @JsonView({MyJsonView.User.class})
     private String city;
 
     @Column(name = "zip_code")
-    private Integer zipCode;
+    @JsonView({MyJsonView.User.class})
+    private String zipCode;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
+    @JsonView({MyJsonView.User.class})
     private Roles role;
 
     @Column(name = "avatar")
+    @JsonView({MyJsonView.User.class})
     private String avatar;
 
     @Column(name = "status")
@@ -70,12 +86,15 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "user")
+    private List<Favorite> favorites;
+
     public User() {
     }
 
-    public User(String firstName, String lastName, String pseudo, String email, String password, Roles role) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String firstname, String lastname, String pseudo, String email, String password, Roles role) {
+        this.firstname = firstname;
+        this.lastname = lastname;
         this.pseudo = pseudo;
         this.email = email;
         this.password = password;
@@ -83,24 +102,52 @@ public class User {
         this.status = Status.VISIBLE;
     }
 
+    public User(String avatar, String firstname, String lastname, String pseudo, String email, String phone, String password, Roles role) {
+        this.avatar = avatar;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.pseudo = pseudo;
+        this.email = email;
+        this.phone = phone;
+        this.password = password;
+        this.role = role;
+        this.status = Status.VISIBLE;
+    }
+
+    public User(String firstname, String lastname, String pseudo, String email, String phone, String password, String biography, String address, String additionalAddress, String city, String zipCode, Roles role, String avatar) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.pseudo = pseudo;
+        this.email = email;
+        this.phone = phone;
+        this.password = password;
+        this.biography = biography;
+        this.address = address;
+        this.additionalAddress = additionalAddress;
+        this.city = city;
+        this.zipCode = zipCode;
+        this.role = role;
+        this.avatar = avatar;
+    }
+
     public Integer getId() {
         return id;
     }
 
-    public String getFirstName() {
-        return firstName;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getLastname() {
+        return lastname;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public String getPseudo() {
@@ -119,11 +166,11 @@ public class User {
         this.email = email;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
@@ -167,11 +214,11 @@ public class User {
         this.city = city;
     }
 
-    public Integer getZipCode() {
+    public String getZipCode() {
         return zipCode;
     }
 
-    public void setZipCode(Integer zipCode) {
+    public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
     }
 
@@ -213,5 +260,13 @@ public class User {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<Favorite> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(List<Favorite> favorites) {
+        this.favorites = favorites;
     }
 }
