@@ -39,8 +39,8 @@
 	</profiles>
 
 	<properties>
-		<java.version>19</java.version>
-		<maven.compiler.target>19</maven.compiler.target>
+		<java.version>17</java.version>
+		<maven.compiler.target>17</maven.compiler.target>
 	</properties>
 	<dependencies>
 		<dependency>
