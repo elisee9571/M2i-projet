@@ -2,7 +2,6 @@ package com.example.demo.controller.auth;
 
 import com.example.demo.config.token.JwtUtil;
 import com.example.demo.entity.User;
-import com.example.demo.entity.UserPrincipal;
 import com.example.demo.enums.Roles;
 import com.example.demo.service.auth.AuthService;
 import com.example.demo.service.UserPrincipalService;
@@ -12,15 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @RestController
 @RequestMapping("/auth")
@@ -60,7 +59,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> authentification(@RequestBody User user) {
+    public ResponseEntity<?> authentification(@RequestBody User user) {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
@@ -70,7 +69,12 @@ public class AuthController {
         }
 
         final UserDetails userDetails = userPrincipalService.loadUserByUsername(user.getEmail());
+        final String token = jwtUtil.generateToken(userDetails);
 
-        return new ResponseEntity<>(jwtUtil.generateToken(userDetails), HttpStatus.OK);
+        Map<String, Object> response = new HashMap<>();
+        response.put("user", userDetails);
+        response.put("token", token);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

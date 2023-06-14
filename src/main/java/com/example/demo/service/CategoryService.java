@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -16,7 +17,7 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public Iterable<Category> getCategories() {
+    public List<Category> getCategories() {
         return categoryRepository.findAll();
     }
 

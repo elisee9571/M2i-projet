@@ -56,7 +56,6 @@ public class ProductService {
                 }
             }
         }
-
         return products;
     }
 
@@ -85,7 +84,6 @@ public class ProductService {
                     }
                 }
             }
-
         }
         return product;
     }
@@ -153,6 +151,8 @@ public class ProductService {
     }
 
     public List<Product> searchProductsByCategoryAndKeyword(Category category, String keyword, String price, Integer pageNumber, Integer pageSize) {
+        String username = tokenAuthorization.getUsernameFromAuthorizationHeader();
+
         Sort sort = Sort.by("createdAt").descending();
         Pageable pagination;
 
@@ -179,6 +179,23 @@ public class ProductService {
             productPage = productRepository.findByCategoryAndTitleContainingOrCategoryAndContentContaining(category, keyword, category, keyword, pagination);
         }
 
-        return productPage.getContent();
+        List<Product> products = productPage.getContent();
+
+        if(username != null){
+            User user = userRepository.findByEmail(username)
+                    .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
+
+            for (Product product : products) {
+                if (!product.getOffers().isEmpty()) {
+                    for (Offer offer : product.getOffers()) {
+                        if (offer.getUser().equals(user)) {
+                            product.setPrice(offer.getAmount());
+                        }
+                    }
+                }
+            }
+        }
+
+        return products;
     }
 }

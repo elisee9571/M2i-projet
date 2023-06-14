@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.fixture.ProductFixture;
 import com.example.demo.fixture.UserFixture;
 import jakarta.annotation.PostConstruct;
 import org.hamcrest.Matchers;
@@ -19,17 +20,20 @@ import static org.hamcrest.Matchers.*;
 class ApiApplicationTests {
 
 	private final UserFixture userFixture;
+	private final ProductFixture productFixture;
 	private final MockMvc mockMvc;
 
 	@Autowired
-	ApiApplicationTests(UserFixture userFixture, MockMvc mockMvc) {
+	ApiApplicationTests(UserFixture userFixture, ProductFixture productFixture,MockMvc mockMvc) {
 		this.userFixture = userFixture;
+		this.productFixture = productFixture;
 		this.mockMvc = mockMvc;
 	}
 
 	@PostConstruct
 	void fixture(){
-		userFixture.generateFixtures();
+//		userFixture.generateFixtures();
+		productFixture.generateFixtures();
 	}
 
 	@Test
