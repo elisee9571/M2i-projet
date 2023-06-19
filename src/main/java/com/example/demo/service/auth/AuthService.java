@@ -36,6 +36,10 @@ public class AuthService {
             throw new IllegalStateException("Email déjà utilisé");
         }
 
+        if (pseudo.length() > 20) {
+            throw new IllegalArgumentException("Le pseudo ne peut pas dépasser 20 caractères");
+        }
+
         User user = new User(firstname, lastname, pseudo, email, passwordEncoder.encode(password), role);
 
         return userRepository.save(user);

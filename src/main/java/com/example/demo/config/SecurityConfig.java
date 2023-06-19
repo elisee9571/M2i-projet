@@ -68,7 +68,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Collections.singletonList("*")); // Accepte toutes les origines
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Méthodes HTTP autorisées
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE")); // Méthodes HTTP autorisées
         configuration.setAllowedHeaders(Collections.singletonList("*")); // Accepte tous les en-têtes
         configuration.setAllowCredentials(true); // Autorise l'envoi des cookies d'authentification
 

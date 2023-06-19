@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Category;
+import com.example.demo.entity.Product;
 import com.example.demo.entity.User;
 import com.example.demo.enums.Roles;
 import com.example.demo.jsonView.MyJsonView;
@@ -63,6 +64,17 @@ public class UserController {
         try {
             return new ResponseEntity<>(userService.getUserByPseudo(pseudo), HttpStatus.OK);
         }catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PatchMapping("/{id}")
+    @JsonView(MyJsonView.User.class)
+    public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody User user) {
+        try {
+            userService.updateUser(user, id);
+            return new ResponseEntity<>("Utilisateur mis à jour", HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
