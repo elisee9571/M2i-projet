@@ -19,23 +19,23 @@ public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.UserPrincipal.class, MyJsonView.Favorite.class})
     private Integer id;
 
     @Column(name = "firstname")
-    @JsonView({MyJsonView.User.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.UserPrincipal.class})
     private String firstname;
 
     @Column(name = "lastname")
-    @JsonView({MyJsonView.User.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.UserPrincipal.class})
     private String lastname;
 
     @Column(name="pseudo", unique = true)
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.UserPrincipal.class, MyJsonView.Favorite.class})
     private String pseudo;
 
     @Column(name="email", unique = true)
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.UserPrincipal.class, MyJsonView.Favorite.class})
     private String email;
 
     @Column(name="phone", unique = true)
@@ -47,7 +47,7 @@ public class User{
     private String password;
 
     @Column(name = "biography")
-    @JsonView({MyJsonView.User.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class})
     private String biography;
 
     @Column(name = "address")
@@ -76,10 +76,12 @@ public class User{
     private String avatar;
 
     @Column(name = "status")
+    @JsonView({MyJsonView.User.class})
     private Status status;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
+    @JsonView({MyJsonView.User.class})
     private LocalDateTime createdAt;
 
     @UpdateTimestamp

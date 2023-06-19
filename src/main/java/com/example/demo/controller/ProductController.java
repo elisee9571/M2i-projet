@@ -50,11 +50,13 @@ public class ProductController {
     @JsonView(MyJsonView.Product.class)
     public ResponseEntity<?> listProductsByUser(
             @PathVariable String pseudo,
+            @RequestParam(value = "category", required = false) Category category,
+            @RequestParam(value = "price", required = false) String price,
             @RequestParam("page") Integer pageNumber,
             @RequestParam("size") Integer pageSize
     ) {
         try {
-            return new ResponseEntity<>(productService.getProductsByUser(pseudo, pageNumber, pageSize), HttpStatus.OK);
+            return new ResponseEntity<>(productService.getProductsByUser(pseudo, category, price, pageNumber, pageSize), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

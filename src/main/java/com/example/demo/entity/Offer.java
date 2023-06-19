@@ -29,6 +29,7 @@ public class Offer {
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
+    @JsonView({MyJsonView.Offer.class, MyJsonView.Product.class})
     private LocalDateTime createdAt;
 
     @UpdateTimestamp

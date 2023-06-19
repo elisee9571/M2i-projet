@@ -1,14 +1,22 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.Category;
+import com.example.demo.entity.Product;
 import com.example.demo.enums.Roles;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -28,9 +36,9 @@ public class UserService {
                 .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'id: " + id));
     }
 
-    public User getUserByUsername(String username){
-        return userRepository.findByEmail(username)
-                .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'email: " + username));
+    public User getUserByPseudo(String pseudo){
+        return userRepository.findByPseudo(pseudo)
+                .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'email: " + pseudo));
     }
 
     public User create(String avatar, String firstname, String lastname, String pseudo, String email, String phone, String password, Roles role) {
@@ -60,4 +68,23 @@ public class UserService {
 
         userRepository.deleteById(id);
     }
-}
+
+    public Map<String, Object> searchUsersLikePseudo(String keyword, Integer pageNumber, Integer pageSize) {
+        Sort sort = Sort.by("createdAt").descending();
+        Pageable pagination = PageRequest.of(pageNumber - 1, pageSize, sort);
+
+        Page<User> userPage = userRepository.findByPseudoContainingIgnoreCase(keyword, pagination);
+
+        List<User> users = userPage.getContent();
+        int totalPages = userPage.getTotalPages();
+        long totalUsers = userPage.getTotalElements();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("users", users);
+        response.put("totalPages", totalPages);
+        response.put("totalUsers", totalUsers);
+
+        return response;
+    }
+
+    }

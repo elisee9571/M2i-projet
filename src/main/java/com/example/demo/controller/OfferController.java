@@ -30,11 +30,11 @@ public class OfferController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{productId}")
     @JsonView(MyJsonView.Offer.class)
-    public ResponseEntity<?> offerId(@PathVariable("id") Integer id) {
+    public ResponseEntity<?> offerId(@PathVariable("productId") Integer productId) {
         try {
-            return new ResponseEntity<>(offerService.getOfferById(id), HttpStatus.OK);
+            return new ResponseEntity<>(offerService.getOfferByProductId(productId), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -51,14 +51,15 @@ public class OfferController {
         }
     }
 
-    @PatchMapping("/acceptOrRejectOffer/{offerId}")
+    @PatchMapping("/acceptOrRejectOffer/{productId}/{offerId}")
     @JsonView(MyJsonView.Offer.class)
     public ResponseEntity<String> acceptOrRejectOffer(
+            @PathVariable("productId") Integer productId,
             @PathVariable("offerId") Integer offerId,
             @RequestParam("accept") boolean accept
     ) {
         try {
-            offerService.acceptOrRejectOffer(offerId, accept);
+            offerService.acceptOrRejectOffer(productId, offerId, accept);
             return new ResponseEntity<>("Offre " + (accept ? "acceptée" : "refusée"), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.Category;
 import com.example.demo.entity.Offer;
 import com.example.demo.jsonView.MyJsonView;
 import com.example.demo.service.FavoriteService;
@@ -22,11 +23,22 @@ public class FavoriteController {
     @GetMapping
     @JsonView(MyJsonView.Favorite.class)
     public ResponseEntity<?> listFavoriteByUser(
+            @RequestParam(value = "category", required = false) Category category,
+            @RequestParam(value = "price", required = false) String price,
             @RequestParam("page") Integer pageNumber,
             @RequestParam("size") Integer pageSize
     ) {
         try {
-            return new ResponseEntity<>(favoriteService.getFavoritesByUser(pageNumber, pageSize), HttpStatus.OK);
+            return new ResponseEntity<>(favoriteService.getFavoritesByUser(category, price, pageNumber, pageSize), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/check")
+    @JsonView(MyJsonView.Favorite.class)
+    public ResponseEntity<?> listFavoriteByUserCheck() {
+        try {
+            return new ResponseEntity<>(favoriteService.getFavoritesByUserCheck(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

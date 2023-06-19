@@ -15,11 +15,11 @@ public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id", nullable = false)
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Favorite.class})
     private Integer id;
 
     @Column(name="title", unique = true)
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Favorite.class})
     private String title;
 
     @ManyToOne

@@ -1,11 +1,12 @@
 package com.example.demo.service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import com.example.demo.config.token.util.TokenAuthorization;
 import com.example.demo.entity.Category;
-import com.example.demo.entity.Offer;
 import com.example.demo.entity.User;
 import com.example.demo.enums.Status;
 import com.example.demo.repository.CategoryRepository;
@@ -33,38 +34,80 @@ public class ProductService {
     @Autowired
     private  TokenAuthorization tokenAuthorization;
 
-    public List<Product> getProducts(Integer pageNumber, Integer pageSize) {
+    public Map<String, Object> getProducts(Integer pageNumber, Integer pageSize) {
         String username = tokenAuthorization.getUsernameFromAuthorizationHeader();
 
         Sort sort = Sort.by("createdAt").descending();
-        Pageable pagination = PageRequest.of(pageNumber, pageSize, sort);
+        Pageable pagination = PageRequest.of(pageNumber - 1, pageSize, sort);
 
         Page<Product> productPage = productRepository.findAll(pagination);
         List<Product> products = productPage.getContent();
+        int totalPages = productPage.getTotalPages();
+        long totalProducts = productPage.getTotalElements();
 
-        if(username != null){
-            User user = userRepository.findByEmail(username)
-                    .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
+//        if(username != null){
+//            User user = userRepository.findByEmail(username)
+//                    .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
+//
+//            for (Product product : products) {
+//                if (!product.getOffers().isEmpty()) {
+//                    for (Offer offer : product.getOffers()) {
+//                        if (offer.getUser().equals(user)) {
+//                            product.setPrice(offer.getAmount());
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
-            for (Product product : products) {
-                if (!product.getOffers().isEmpty()) {
-                    for (Offer offer : product.getOffers()) {
-                        if (offer.getUser().equals(user)) {
-                            product.setPrice(offer.getAmount());
-                        }
-                    }
-                }
-            }
-        }
-        return products;
+        Map<String, Object> response = new HashMap<>();
+        response.put("products", products);
+        response.put("totalPages", totalPages);
+        response.put("totalProducts", totalProducts);
+
+        return response;
     }
 
-    public List<Product> getProductsByUser(String pseudo, Integer pageNumber, Integer pageSize) {
-        Sort sort = Sort.by("createdAt").descending();
-        Pageable pagination = PageRequest.of(pageNumber, pageSize, sort);
+    public Map<String, Object> getProductsByUser(String pseudo, Category category, String price, Integer pageNumber, Integer pageSize) {
+        User user = userRepository.findByPseudo(pseudo)
+                .orElseThrow(() -> new IllegalStateException("Utilisateur introuvable avec l'username: " + pseudo));
 
-        Page<Product> productPage = productRepository.findByUserPseudo(pseudo, pagination);
-        return productPage.getContent();
+        Sort sort = Sort.by("createdAt").descending();
+        Pageable pagination;
+
+        if(price == null){
+            pagination = PageRequest.of(pageNumber - 1, pageSize, sort);
+        }else {
+            Sort sortPrice;
+
+            if("priceASC".equals(price)){
+                sortPrice = Sort.by("price").ascending();
+            }else {
+                sortPrice = Sort.by("price").descending();
+            }
+
+            Sort sortGroup = sortPrice.and(sort);
+            pagination = PageRequest.of(pageNumber - 1, pageSize, sortGroup);
+        }
+
+        Page<Product> productPage;
+
+        if (category == null) {
+            productPage = productRepository.findByUserPseudo(user.getPseudo(), pagination);
+        } else {
+            productPage = productRepository.findByUserPseudoAndCategory(user.getPseudo(), category, pagination);
+        }
+
+        List<Product> products = productPage.getContent();
+        int totalPages = productPage.getTotalPages();
+        long totalProducts = productPage.getTotalElements();
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("products", products);
+        response.put("totalPages", totalPages);
+        response.put("totalProducts", totalProducts);
+
+        return response;
     }
 
     public Product getProductById(Integer id) {
@@ -73,18 +116,18 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(()-> new IllegalStateException("Produit introuvable avec l'id: " + id));
 
-        if(username != null){
-            User user = userRepository.findByEmail(username)
-                    .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
-
-            if (!product.getOffers().isEmpty()) {
-                for (Offer offer : product.getOffers()) {
-                    if (offer.getUser().equals(user)) {
-                        product.setPrice(offer.getAmount());
-                    }
-                }
-            }
-        }
+//        if(username != null){
+//            User user = userRepository.findByEmail(username)
+//                    .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
+//
+//            if (!product.getOffers().isEmpty()) {
+//                for (Offer offer : product.getOffers()) {
+//                    if (offer.getUser().equals(user)) {
+//                        product.setPrice(offer.getAmount());
+//                    }
+//                }
+//            }
+//        }
         return product;
     }
 
@@ -150,14 +193,14 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public List<Product> searchProductsByCategoryAndKeyword(Category category, String keyword, String price, Integer pageNumber, Integer pageSize) {
+    public Map<String, Object> searchProductsByCategoryAndKeyword(Category category, String keyword, String price, Integer pageNumber, Integer pageSize) {
         String username = tokenAuthorization.getUsernameFromAuthorizationHeader();
 
         Sort sort = Sort.by("createdAt").descending();
         Pageable pagination;
 
         if(price == null){
-            pagination = PageRequest.of(pageNumber, pageSize, sort);
+            pagination = PageRequest.of(pageNumber - 1, pageSize, sort);
         }else {
             Sort sortPrice;
 
@@ -168,7 +211,7 @@ public class ProductService {
             }
 
             Sort sortGroup = sortPrice.and(sort);
-            pagination = PageRequest.of(pageNumber, pageSize, sortGroup);
+            pagination = PageRequest.of(pageNumber - 1, pageSize, sortGroup);
         }
 
         Page<Product> productPage;
@@ -180,22 +223,29 @@ public class ProductService {
         }
 
         List<Product> products = productPage.getContent();
+        int totalPages = productPage.getTotalPages();
+        long totalProducts = productPage.getTotalElements();
 
-        if(username != null){
-            User user = userRepository.findByEmail(username)
-                    .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
+//        if(username != null){
+//            User user = userRepository.findByEmail(username)
+//                    .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
+//
+//            for (Product product : products) {
+//                if (!product.getOffers().isEmpty()) {
+//                    for (Offer offer : product.getOffers()) {
+//                        if (offer.getUser().equals(user)) {
+//                            product.setPrice(offer.getAmount());
+//                        }
+//                    }
+//                }
+//            }
+//        }
 
-            for (Product product : products) {
-                if (!product.getOffers().isEmpty()) {
-                    for (Offer offer : product.getOffers()) {
-                        if (offer.getUser().equals(user)) {
-                            product.setPrice(offer.getAmount());
-                        }
-                    }
-                }
-            }
-        }
+        Map<String, Object> response = new HashMap<>();
+        response.put("products", products);
+        response.put("totalPages", totalPages);
+        response.put("totalProducts", totalProducts);
 
-        return products;
+        return response;
     }
 }

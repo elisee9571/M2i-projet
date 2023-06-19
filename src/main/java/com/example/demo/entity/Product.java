@@ -40,7 +40,7 @@ public class Product {
     private Currencies currencyCode;
 
     @Column(name = "status")
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
     private Status status;
 
     @CreationTimestamp
@@ -55,12 +55,12 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user")
-    @JsonView({MyJsonView.Product.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Favorite.class, MyJsonView.Offer.class})
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_category")
-    @JsonView({MyJsonView.Product.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Favorite.class})
     private Category category;
 
     @OneToMany(mappedBy = "product")
@@ -68,8 +68,9 @@ public class Product {
     private List<Offer> offers = new ArrayList<>();
 
     @OneToMany(mappedBy = "product")
-    @JsonView({MyJsonView.Product.class})
     private List<Favorite> favorites;
+    @JsonView({MyJsonView.Product.class, MyJsonView.Favorite.class})
+    private int favoritesCount;
 
     public Product(String title, String content, Float price, Currencies currencyCode ,Status status, User user, Category category) {
         this.title = title;
@@ -175,5 +176,9 @@ public class Product {
 
     public void setFavorites(List<Favorite> favorites) {
         this.favorites = favorites;
+    }
+
+    public int getFavoritesCount() {
+        return getFavorites().size();
     }
 }

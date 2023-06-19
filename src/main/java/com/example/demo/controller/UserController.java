@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.entity.Category;
 import com.example.demo.entity.User;
 import com.example.demo.enums.Roles;
 import com.example.demo.jsonView.MyJsonView;
@@ -56,11 +57,11 @@ public class UserController {
         }
     }
 
-    @GetMapping("/{username}")
+    @GetMapping("/{pseudo}")
     @JsonView(MyJsonView.User.class)
-    public ResponseEntity<?> user(@PathVariable String username) {
+    public ResponseEntity<?> user(@PathVariable String pseudo) {
         try {
-            return new ResponseEntity<>(userService.getUserByUsername(username), HttpStatus.OK);
+            return new ResponseEntity<>(userService.getUserByPseudo(pseudo), HttpStatus.OK);
         }catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -76,4 +77,17 @@ public class UserController {
         }
     }
 
+    @GetMapping("/search")
+    @JsonView(MyJsonView.Product.class)
+    public ResponseEntity<?> searchUsers(
+            @RequestParam("keyword") String keyword,
+            @RequestParam("page") Integer pageNumber,
+            @RequestParam("size") Integer pageSize
+    ) {
+        try {
+            return new ResponseEntity<>(userService.searchUsersLikePseudo(keyword, pageNumber, pageSize), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

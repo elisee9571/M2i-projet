@@ -2,6 +2,8 @@ package com.example.demo.entity;
 
 
 import com.example.demo.enums.Roles;
+import com.example.demo.jsonView.MyJsonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -10,10 +12,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class UserPrincipal implements UserDetails {
+    @JsonView({MyJsonView.UserPrincipal.class})
     private User user;
     public UserPrincipal(User user){
         this.user = user;
     }
+
     public User getUser(){
         return user;
     }

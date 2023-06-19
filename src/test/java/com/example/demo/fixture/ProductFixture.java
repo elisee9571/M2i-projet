@@ -35,7 +35,7 @@ public class ProductFixture {
     }
 
     public void generateFixtures() {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             String title = faker.name().title();
             String content = faker.lorem().sentence();
             Float price = (float) faker.number().randomDouble(2, 0, 1000);

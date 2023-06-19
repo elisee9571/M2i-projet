@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 public interface ProductRepository extends JpaRepository<Product, Integer> {
 
     Page<Product> findByUserPseudo(String pseudo, Pageable pagination);
+    Page<Product> findByUserPseudoAndCategory(String pseudo, Category category, Pageable pagination);
     Page<Product> findByCategoryAndTitleContainingOrCategoryAndContentContaining(Category category1, String title, Category category2, String content, Pageable pagination);
     Page<Product> findByTitleContainingOrContentContaining(String title, String content, Pageable pagination);
 }

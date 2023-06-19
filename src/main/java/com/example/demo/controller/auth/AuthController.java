@@ -3,8 +3,10 @@ package com.example.demo.controller.auth;
 import com.example.demo.config.token.JwtUtil;
 import com.example.demo.entity.User;
 import com.example.demo.enums.Roles;
+import com.example.demo.jsonView.MyJsonView;
 import com.example.demo.service.auth.AuthService;
 import com.example.demo.service.UserPrincipalService;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
 import java.util.Map;
-
 
 @RestController
 @RequestMapping("/auth")
@@ -59,6 +60,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @JsonView(MyJsonView.UserPrincipal.class)
     public ResponseEntity<?> authentification(@RequestBody User user) {
         try {
             authenticationManager.authenticate(

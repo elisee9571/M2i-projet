@@ -10,4 +10,5 @@ public class MyJsonView {
     public static class Order{};
     public static class Rate{};
     public static class User{};
+    public static class UserPrincipal{};
 }
