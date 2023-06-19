@@ -90,6 +90,10 @@ public class UserService {
             user.setEmail(data.getEmail());
         }
 
+        if (data.getPhone().length() > 10) {
+            throw new IllegalArgumentException("Le Téléphone ne peut pas dépasser 10 chiffres");
+        }
+
         if (data.getPhone() != null && !Objects.equals(user.getPhone(), data.getPhone())){
             user.setPhone(data.getPhone());
         }
