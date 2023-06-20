@@ -79,6 +79,41 @@ public class UserController {
         }
     }
 
+    @PatchMapping("/updatePassword")
+    @JsonView(MyJsonView.User.class)
+    public ResponseEntity<?> updatePassword(@RequestBody User user) {
+        try {
+            userService.updatePassword(user.getOldPassword(), user.getPassword());
+            return new ResponseEntity<>("Mot de passe mis à jour", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<?> requestForgotPassword(@RequestBody User user) {
+        try {
+            return new ResponseEntity<>(userService.requestForgotPassword(user.getEmail()), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PatchMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(
+            @RequestParam("resetToken") String resetToken,
+            @RequestParam("dataToken") String dataToken,
+            @RequestParam("userId") Integer userId,
+            @RequestParam("newPassword") String newPassword
+    ) {
+        try {
+            userService.resetPassword(resetToken, dataToken, userId, newPassword);
+            return new ResponseEntity<>("Mot de passe réinitialisé", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Integer id) {
         try {

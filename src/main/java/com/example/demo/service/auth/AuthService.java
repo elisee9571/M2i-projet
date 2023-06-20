@@ -4,6 +4,8 @@ import com.example.demo.entity.Category;
 import com.example.demo.entity.User;
 import com.example.demo.enums.Roles;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.email.EmailService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -24,7 +26,10 @@ public class AuthService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User register(String firstname, String lastname, String pseudo, String email, String password, Roles role) {
+    @Autowired
+    private EmailService emailService;
+
+    public User register(String firstname, String lastname, String pseudo, String email, String password, Roles role) throws MessagingException {
         Optional<User> pseudoAlreadyUse = userRepository.findByPseudo(pseudo);
         Optional<User> emailAlreadyUse = userRepository.findByEmail(email);
 
@@ -41,6 +46,7 @@ public class AuthService {
         }
 
         User user = new User(firstname, lastname, pseudo, email, passwordEncoder.encode(password), role);
+        emailService.sendEmail("recipient@example.com", "Test d'e-mail");
 
         return userRepository.save(user);
     }

@@ -46,6 +46,8 @@ public class User{
     @JsonView({MyJsonView.User.class})
     private String password;
 
+    private String oldPassword;
+
     @Column(name = "biography")
     @JsonView({MyJsonView.User.class, MyJsonView.Product.class})
     private String biography;
@@ -176,9 +178,9 @@ public class User{
         this.phone = phone;
     }
 
-    public String getPassword() {
-        return password;
-    }
+    public String getPassword() {return password;}
+
+    public String getOldPassword() {return oldPassword;}
 
     public void setPassword(String password) {
         this.password = password;

@@ -44,6 +44,8 @@ public class SecurityConfig {
                 .and().csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/auth/login", "/auth/register").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/users/resetPassword").permitAll()
+                .requestMatchers(HttpMethod.POST, "/users/forgotPassword").permitAll()
                 .requestMatchers(HttpMethod.GET, "/users/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/users").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/products/**").permitAll()

@@ -4,6 +4,8 @@ import com.example.demo.config.token.util.TokenAuthorization;
 import com.example.demo.entity.Category;
 import com.example.demo.entity.Product;
 import com.example.demo.enums.Roles;
+import com.example.demo.service.email.EmailService;
+import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.example.demo.entity.User;
 import com.example.demo.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -27,6 +30,9 @@ public class UserService {
 
     @Autowired
     private TokenAuthorization tokenAuthorization;
+
+    @Autowired
+    private EmailService emailService;
 
     public List<User> getUsers(){
         return userRepository.findAll();
@@ -122,6 +128,66 @@ public class UserService {
             user.setZipCode(data.getZipCode());
         }
 
+        userRepository.save(user);
+    }
+
+    public void updatePassword(String oldPassword, String newPassword) {
+        String username = tokenAuthorization.getUsernameFromAuthorizationHeader();
+
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
+
+        if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userRepository.save(user);
+        } else {
+            throw new IllegalArgumentException("Le mot de passe actuel que vous avez saisi ne correspond pas à celui enregistré. Veuillez vérifier et réessayer.");
+        }
+    }
+
+    public Map<String, String> requestForgotPassword(String email) throws MessagingException {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable. Veuillez vérifier et réessayer."));
+
+        // Génération du jeton de réinitialisation
+        String generateToken = UUID.randomUUID().toString();
+
+        // Définition de la date d'expiration du jeton (par exemple, 24 heures à partir de maintenant)
+        LocalDateTime expirationDateTime = LocalDateTime.now().plusHours(24);
+
+        String token = generateToken + "/" + expirationDateTime;
+        Integer userId = user.getId();
+        String resetParamsLink = "?token=" + token + "&userId=" + userId;
+
+        emailService.sendResetPasswordEmail(user.getEmail(), "Réinitialiser mot de passe", resetParamsLink);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("dataToken", generateToken);
+        response.put("message", "Demande de réinitialisation de mot de passe envoyée");
+
+        return response;
+    }
+
+    public void resetPassword(String resetToken, String dataToken, Integer userId, String newPassword) {
+        // Extraire le jeton et la date d'expiration à partir du resetToken
+        String[] tokenParts = resetToken.split("/");
+        String token = tokenParts[0];
+        LocalDateTime expirationDateTime = LocalDateTime.parse(tokenParts[1]);
+
+        if (!token.equals(dataToken)) {
+            throw new IllegalStateException("Jeton de réinitialisation invalide");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Utilisateur introuvable avec l'id: " + userId));
+
+        // Vérifier si le jeton est expiré
+        if (LocalDateTime.now().isAfter(expirationDateTime)) {
+            throw new IllegalStateException("Jeton de réinitialisation expiré");
+        }
+
+        // Mettre à jour le mot de passe de l'utilisateur
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
