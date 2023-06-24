@@ -19,27 +19,27 @@ public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.UserPrincipal.class, MyJsonView.Favorite.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.UserPrincipal.class, MyJsonView.Favorite.class, MyJsonView.Order.class})
     private Integer id;
 
     @Column(name = "firstname")
-    @JsonView({MyJsonView.User.class, MyJsonView.UserPrincipal.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.UserPrincipal.class, MyJsonView.Order.class})
     private String firstname;
 
     @Column(name = "lastname")
-    @JsonView({MyJsonView.User.class, MyJsonView.UserPrincipal.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.UserPrincipal.class, MyJsonView.Order.class})
     private String lastname;
 
     @Column(name="pseudo", unique = true)
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.UserPrincipal.class, MyJsonView.Favorite.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.UserPrincipal.class, MyJsonView.Favorite.class, MyJsonView.Order.class})
     private String pseudo;
 
     @Column(name="email", unique = true)
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.UserPrincipal.class, MyJsonView.Favorite.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.UserPrincipal.class, MyJsonView.Favorite.class, MyJsonView.Order.class})
     private String email;
 
     @Column(name="phone", unique = true)
-    @JsonView({MyJsonView.User.class})
+    @JsonView({MyJsonView.User.class, MyJsonView.Order.class})
     private String phone;
 
     @Column(name = "password")
@@ -49,7 +49,7 @@ public class User{
     private String oldPassword;
 
     @Column(name = "biography")
-    @JsonView({MyJsonView.User.class, MyJsonView.Product.class})
+    @JsonView({MyJsonView.User.class})
     private String biography;
 
     @Column(name = "address")

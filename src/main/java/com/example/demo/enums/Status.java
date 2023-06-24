@@ -4,6 +4,8 @@ public enum Status {
     VISIBLE,
     BLOCKED,
     DRAFT,
+    HIDE,
+    PAID,
     ACCEPTED,
     REJECTED,
     PENDING,

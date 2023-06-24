@@ -35,18 +35,34 @@ public class ProductFixture {
     }
 
     public void generateFixtures() {
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 300; i++) {
             String title = faker.name().title();
             String content = faker.lorem().sentence();
             Float price = (float) faker.number().randomDouble(2, 0, 1000);
             Currencies currencyCode = Currencies.EUR;
-            Status status = Status.VISIBLE;
+            Status status = getRandomStatus();
             User user = getRandomUser();
             Category category = getRandomCategory();
 
             Product product = new Product(title, content, price, currencyCode , status, user, category);
 
             productRepository.save(product);
+        }
+    }
+
+    public Status getRandomStatus() {
+        int randomNum = faker.random().nextInt(4);
+        switch (randomNum) {
+            case 0:
+                return Status.VISIBLE;
+            case 1:
+                return Status.DRAFT;
+            case 2:
+                return Status.SOLD;
+            case 3:
+                return Status.HIDE;
+            default:
+                throw new IllegalStateException("Statut aléatoire non pris en charge");
         }
     }
 

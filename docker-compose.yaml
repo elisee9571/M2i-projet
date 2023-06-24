@@ -1,0 +1,64 @@
+version: "3.9"
+
+volumes:
+  data_storage_api:
+  prometheus_data:
+  jenkins_data:
+
+networks:
+  spring-boot-network:
+
+services:
+    bdd:
+      image: mysql:8.0.32-oracle
+      container_name: spring-boot-api-bdd
+      restart: always
+      ports:
+        - "3306:3306"
+      environment:
+        MYSQL_DATABASE: db_test
+        MYSQL_ROOT_PASSWORD: paris
+      volumes:
+        - data_storage_api:/var/lib/mysql
+      networks:
+        - spring-boot-network
+
+    jenkins:
+      image: jenkins/jenkins:lts
+      container_name: jenkins_abstract
+      ports:
+        - 8080:8080
+      volumes:
+        - jenkins_data:/var/jenkins_home
+      networks:
+        - spring-boot-network
+
+    grafana:
+      image: grafana/grafana:latest
+      container_name: spring-boot-api-grafana
+      ports:
+        - 3000:3000
+      networks:
+        - spring-boot-network
+
+    prometheus:
+        image: prom/prometheus:latest
+        container_name: spring-boot-api-prometheus
+        ports:
+          - 9090:9090
+        volumes:
+          - ./prometheus:/etc/prometheus
+          - prometheus_data:/prometheus
+        networks:
+          - spring-boot-network
+
+    maildev:
+        image: maildev/maildev
+        container_name: spring-boot-api-maildev
+        command: bin/maildev --web 80 --smtp 25 --hide-extensions STARTTLS
+        restart: always
+        ports:
+          - "1080:80"
+          - "25:25"
+        networks:
+          - spring-boot-network

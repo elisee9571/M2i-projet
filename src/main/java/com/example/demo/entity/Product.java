@@ -13,6 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.example.demo.enums.Status;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "product")
@@ -20,11 +21,11 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class, MyJsonView.Favorite.class, MyJsonView.Order.class})
     private Integer id;
 
     @Column(name = "title")
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class, MyJsonView.Favorite.class, MyJsonView.Order.class})
     private String title;
 
     @Column(name = "content")
@@ -32,11 +33,14 @@ public class Product {
     private String content;
 
     @Column(name = "price")
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class, MyJsonView.Favorite.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Offer.class, MyJsonView.Favorite.class, MyJsonView.Order.class})
     private Float price;
 
+    @JsonView({MyJsonView.Product.class, MyJsonView.Offer.class, MyJsonView.Order.class})
+    private Float priceOffer;
+
     @Column(name = "currency_code")
-    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Category.class, MyJsonView.Order.class})
     private Currencies currencyCode;
 
     @Column(name = "status")
@@ -55,13 +59,20 @@ public class Product {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user")
-    @JsonView({MyJsonView.Product.class, MyJsonView.Favorite.class, MyJsonView.Offer.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Favorite.class, MyJsonView.Offer.class, MyJsonView.Order.class})
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_category")
     @JsonView({MyJsonView.Product.class, MyJsonView.Favorite.class})
     private Category category;
+
+    @OneToMany(mappedBy = "product")
+    @JsonView({MyJsonView.Product.class, MyJsonView.Favorite.class})
+    private List<Image> images;
+
+    @Transient
+    private List<MultipartFile> fileUploads;
 
     @OneToMany(mappedBy = "product")
     @JsonView({MyJsonView.Product.class})
@@ -114,6 +125,14 @@ public class Product {
         this.price = price;
     }
 
+    public Float getPriceOffer() {
+        return priceOffer;
+    }
+
+    public void setPriceOffer(Float priceOffer) {
+        this.priceOffer = priceOffer;
+    }
+
     public Currencies getCurrencyCode() {
         return currencyCode;
     }
@@ -162,6 +181,14 @@ public class Product {
         this.category = category;
     }
 
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
     public List<Offer> getOffers() {
         return offers;
     }
@@ -180,5 +207,13 @@ public class Product {
 
     public int getFavoritesCount() {
         return getFavorites().size();
+    }
+//
+    public List<MultipartFile> getFileUploads() {
+        return fileUploads;
+    }
+
+    public void setFileUploads(List<MultipartFile> fileUploads) {
+        this.fileUploads = fileUploads;
     }
 }

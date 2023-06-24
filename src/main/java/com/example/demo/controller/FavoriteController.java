@@ -24,12 +24,12 @@ public class FavoriteController {
     @JsonView(MyJsonView.Favorite.class)
     public ResponseEntity<?> listFavoriteByUser(
             @RequestParam(value = "category", required = false) Category category,
-            @RequestParam(value = "price", required = false) String price,
+            @RequestParam(value = "sort", required = false) String sorted,
             @RequestParam("page") Integer pageNumber,
             @RequestParam("size") Integer pageSize
     ) {
         try {
-            return new ResponseEntity<>(favoriteService.getFavoritesByUser(category, price, pageNumber, pageSize), HttpStatus.OK);
+            return new ResponseEntity<>(favoriteService.getFavoritesByUser(category, sorted, pageNumber, pageSize), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }

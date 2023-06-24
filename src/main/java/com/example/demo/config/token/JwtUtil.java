@@ -50,4 +50,5 @@ public class JwtUtil {
         final String username = extractBodyToken(token).getSubject();
         return (username.equals(userDetails.getUsername()) && tokenNoDateExpiry(token));
     }
+
 }

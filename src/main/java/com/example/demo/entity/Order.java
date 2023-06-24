@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import com.example.demo.jsonView.MyJsonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -15,36 +17,50 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
+    @JsonView({MyJsonView.Order.class})
     private Integer id;
 
+//    @Column(name = "reference")
+//    @JsonView({MyJsonView.Order.class})
+//    private String reference;
+
     @Column(name = "delivery_address")
+    @JsonView({MyJsonView.Order.class})
     private String deliveryAddress;
 
     @Column(name = "additional_delivery_address")
+    @JsonView({MyJsonView.Order.class})
     private String additionalDeliveryAddress;
 
     @Column(name = "city")
+    @JsonView({MyJsonView.Order.class})
     private String city;
 
     @Column(name = "zip_code")
+    @JsonView({MyJsonView.Order.class})
     private Integer zipCode;
 
     @Column(name = "amount")
+    @JsonView({MyJsonView.Order.class})
     private float amount;
 
     @Column(name = "status")
+    @JsonView({MyJsonView.Order.class})
     private Status status;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_user")
+    @JsonView({MyJsonView.Order.class})
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_product")
+    @JsonView({MyJsonView.Order.class})
     private Product product;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
+    @JsonView({MyJsonView.Order.class})
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
@@ -54,9 +70,28 @@ public class Order {
     public Order() {
     }
 
+    public Order(String deliveryAddress, String additionalDeliveryAddress, String city, Integer zipCode, float amount, Status status, User user, Product product) {
+        this.deliveryAddress = deliveryAddress;
+        this.additionalDeliveryAddress = additionalDeliveryAddress;
+        this.city = city;
+        this.zipCode = zipCode;
+        this.amount = amount;
+        this.status = status;
+        this.user = user;
+        this.product = product;
+    }
+
     public Integer getId() {
         return id;
     }
+
+//    public String getReference() {
+//        return reference;
+//    }
+//
+//    public void setReference(String reference) {
+//        this.reference = reference;
+//    }
 
     public String getDeliveryAddress() {
         return deliveryAddress;

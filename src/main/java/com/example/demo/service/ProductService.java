@@ -1,13 +1,11 @@
 package com.example.demo.service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.io.IOException;
+import java.util.*;
 
 import com.example.demo.config.token.util.TokenAuthorization;
-import com.example.demo.entity.Category;
-import com.example.demo.entity.User;
+import com.example.demo.entity.*;
+import com.example.demo.enums.Currencies;
 import com.example.demo.enums.Status;
 import com.example.demo.repository.CategoryRepository;
 import com.example.demo.repository.UserRepository;
@@ -18,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Sort;
 
-import com.example.demo.entity.Product;
 import com.example.demo.repository.ProductRepository;
 
 @Service
@@ -34,31 +31,17 @@ public class ProductService {
     @Autowired
     private  TokenAuthorization tokenAuthorization;
 
-    public Map<String, Object> getProducts(Integer pageNumber, Integer pageSize) {
-        String username = tokenAuthorization.getUsernameFromAuthorizationHeader();
+    @Autowired
+    private  ImageService imageService;
 
+    public Map<String, Object> getProducts(Integer pageNumber, Integer pageSize) {
         Sort sort = Sort.by("createdAt").descending();
         Pageable pagination = PageRequest.of(pageNumber - 1, pageSize, sort);
 
-        Page<Product> productPage = productRepository.findAll(pagination);
+        Page<Product> productPage = productRepository.findByStatus(Status.VISIBLE, pagination);
         List<Product> products = productPage.getContent();
         int totalPages = productPage.getTotalPages();
         long totalProducts = productPage.getTotalElements();
-
-//        if(username != null){
-//            User user = userRepository.findByEmail(username)
-//                    .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
-//
-//            for (Product product : products) {
-//                if (!product.getOffers().isEmpty()) {
-//                    for (Offer offer : product.getOffers()) {
-//                        if (offer.getUser().equals(user)) {
-//                            product.setPrice(offer.getAmount());
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("products", products);
@@ -68,34 +51,64 @@ public class ProductService {
         return response;
     }
 
-    public Map<String, Object> getProductsByUser(String pseudo, Category category, String price, Integer pageNumber, Integer pageSize) {
+    public Map<String, Object> getProductsByUser(String pseudo, Category category, String sorted, Integer pageNumber, Integer pageSize) {
+        String username = tokenAuthorization.getUsernameFromAuthorizationHeader();
+
         User user = userRepository.findByPseudo(pseudo)
-                .orElseThrow(() -> new IllegalStateException("Utilisateur introuvable avec l'username: " + pseudo));
+                .orElseThrow(() -> new IllegalStateException("Utilisateur introuvable avec le pseudo: " + pseudo));
 
         Sort sort = Sort.by("createdAt").descending();
         Pageable pagination;
 
-        if(price == null){
+        if(sorted == null){
             pagination = PageRequest.of(pageNumber - 1, pageSize, sort);
         }else {
-            Sort sortPrice;
+            Sort sortBy;
 
-            if("priceASC".equals(price)){
-                sortPrice = Sort.by("price").ascending();
+            if ("priceASC".equals(sorted)) {
+                sortBy = Sort.by("price").ascending();
+            } else if ("priceDESC".equals(sorted)) {
+                sortBy = Sort.by("price").descending();
+            } else if ("createdAtASC".equals(sorted)) {
+                sortBy = Sort.by("createdAt").ascending();
             }else {
-                sortPrice = Sort.by("price").descending();
+                sortBy = Sort.by("createdAt").descending();
             }
 
-            Sort sortGroup = sortPrice.and(sort);
+            Sort sortGroup = sortBy.and(sort);
             pagination = PageRequest.of(pageNumber - 1, pageSize, sortGroup);
         }
 
         Page<Product> productPage;
 
-        if (category == null) {
-            productPage = productRepository.findByUserPseudo(user.getPseudo(), pagination);
+        if (username != null) {
+            User userVisitor = userRepository.findByEmail(username)
+                    .orElseThrow(() -> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
+
+            if (user.getId().equals(userVisitor.getId())) {
+                // L'utilisateur connecté est le même que l'utilisateur visité,
+                // donc afficher tous les produits de cet utilisateur, quels que soient leur statut
+                if (category == null) {
+                    productPage = productRepository.findByUserPseudo(user.getPseudo(), pagination);
+                } else {
+                    productPage = productRepository.findByUserPseudoAndCategory(user.getPseudo(), category, pagination);
+                }
+            } else {
+                // L'utilisateur connecté est différent de l'utilisateur visité,
+                // donc afficher uniquement les produits avec le statut visible ou vendu
+                if (category == null) {
+                    productPage = productRepository.findByUserPseudoAndStatusIn(user.getPseudo(), Arrays.asList(Status.VISIBLE, Status.SOLD), pagination);
+                } else {
+                    productPage = productRepository.findByUserPseudoAndCategoryAndStatusIn(user.getPseudo(), category, Arrays.asList(Status.VISIBLE, Status.SOLD), pagination);
+                }
+            }
         } else {
-            productPage = productRepository.findByUserPseudoAndCategory(user.getPseudo(), category, pagination);
+            // Pas d'utilisateur connecté, afficher uniquement les produits avec le statut visible
+            if (category == null) {
+                productPage = productRepository.findByUserPseudoAndStatus(user.getPseudo(), Status.VISIBLE, pagination);
+            } else {
+                productPage = productRepository.findByUserPseudoAndCategoryAndStatus(user.getPseudo(), category, Status.VISIBLE, pagination);
+            }
         }
 
         List<Product> products = productPage.getContent();
@@ -116,37 +129,53 @@ public class ProductService {
         Product product = productRepository.findById(id)
                 .orElseThrow(()-> new IllegalStateException("Produit introuvable avec l'id: " + id));
 
-//        if(username != null){
-//            User user = userRepository.findByEmail(username)
-//                    .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
-//
-//            if (!product.getOffers().isEmpty()) {
-//                for (Offer offer : product.getOffers()) {
-//                    if (offer.getUser().equals(user)) {
-//                        product.setPrice(offer.getAmount());
-//                    }
-//                }
-//            }
-//        }
+        if (username != null) {
+            User user = userRepository.findByEmail(username)
+                    .orElseThrow(() -> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
+
+            if (!product.getOffers().isEmpty()) {
+                for (Offer offer : product.getOffers()) {
+                    if (offer.getUser().equals(user) && offer.getStatus() == Status.ACCEPTED) {
+                        product.setPriceOffer(offer.getAmount());
+                    }
+                }
+            }
+        }
+
         return product;
     }
 
-    public void saveProduct(Product product) {
+    public Product saveProduct(Product product) throws IOException {
         String username = tokenAuthorization.getUsernameFromAuthorizationHeader();
-
-        Integer categoryId = product.getCategory().getId();
 
         User user = userRepository.findByEmail(username)
                 .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
 
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(()-> new IllegalStateException("Catégorie introuvable avec l'id: " + categoryId));
-
         product.setStatus(Status.VISIBLE);
+        product.setCurrencyCode(Currencies.EUR);
         product.setUser(user);
-        product.setCategory(category);
 
-        productRepository.save(product);
+        Product test = productRepository.save(product);
+
+        imageService.saveFiles(test);
+        return product;
+    }
+
+    public Product saveProductStatusDraft(Product product) throws IOException {
+        String username = tokenAuthorization.getUsernameFromAuthorizationHeader();
+
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
+
+
+        product.setStatus(Status.DRAFT);
+        product.setCurrencyCode(Currencies.EUR);
+        product.setUser(user);
+
+        Product test = productRepository.save(product);
+
+        imageService.saveFiles(test);
+        return product;
     }
 
     public void updateProduct(Product data, Integer id){
@@ -177,6 +206,28 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    public void updateProductStatus(Integer id, Status status){
+        String username = tokenAuthorization.getUsernameFromAuthorizationHeader();
+
+        User user = userRepository.findByEmail(username)
+                .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("Produit introuvable avec l'id: " + id));
+
+        if(!Objects.equals(user.getId(), product.getUser().getId())){
+            throw new IllegalStateException("Vous n'etes pas autorisé à effectuer cette opération.");
+        }
+
+        if(status.equals(product.getStatus())){
+            throw new IllegalStateException("Il semble que votre produit soit déjà dans l'état que vous souhaitez.");
+        }
+
+        product.setStatus(status);
+
+        productRepository.save(product);
+    }
+
     public void deleteProduct(Integer id) {
         String username = tokenAuthorization.getUsernameFromAuthorizationHeader();
 
@@ -193,53 +244,40 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    public Map<String, Object> searchProductsByCategoryAndKeyword(Category category, String keyword, String price, Integer pageNumber, Integer pageSize) {
-        String username = tokenAuthorization.getUsernameFromAuthorizationHeader();
-
+    public Map<String, Object> searchProductsByCategoryAndKeyword(Category category, String keyword, String sorted, Integer pageNumber, Integer pageSize) {
         Sort sort = Sort.by("createdAt").descending();
         Pageable pagination;
 
-        if(price == null){
+        if(sorted == null){
             pagination = PageRequest.of(pageNumber - 1, pageSize, sort);
         }else {
-            Sort sortPrice;
+            Sort sortBy;
 
-            if("priceASC".equals(price)){
-                sortPrice = Sort.by("price").ascending();
+            if ("priceASC".equals(sorted)) {
+                sortBy = Sort.by("price").ascending();
+            } else if ("priceDESC".equals(sorted)) {
+                sortBy = Sort.by("price").descending();
+            } else if ("createdAtASC".equals(sorted)) {
+                sortBy = Sort.by("createdAt").ascending();
             }else {
-                sortPrice = Sort.by("price").descending();
+                sortBy = Sort.by("createdAt").descending();
             }
 
-            Sort sortGroup = sortPrice.and(sort);
+            Sort sortGroup = sortBy.and(sort);
             pagination = PageRequest.of(pageNumber - 1, pageSize, sortGroup);
         }
 
         Page<Product> productPage;
 
         if (category == null) {
-            productPage = productRepository.findByTitleContainingOrContentContaining(keyword, keyword, pagination);
+            productPage = productRepository.findByTitleContainingAndStatusOrContentContainingAndStatus(keyword, Status.VISIBLE, keyword, Status.VISIBLE,pagination);
         } else {
-            productPage = productRepository.findByCategoryAndTitleContainingOrCategoryAndContentContaining(category, keyword, category, keyword, pagination);
+            productPage = productRepository.findByCategoryAndTitleContainingAndStatusOrCategoryAndContentContainingAndStatus(category, keyword, Status.VISIBLE, category, keyword, Status.VISIBLE, pagination);
         }
 
         List<Product> products = productPage.getContent();
         int totalPages = productPage.getTotalPages();
         long totalProducts = productPage.getTotalElements();
-
-//        if(username != null){
-//            User user = userRepository.findByEmail(username)
-//                    .orElseThrow(()-> new IllegalStateException("Utilisateur introuvable avec l'username: " + username));
-//
-//            for (Product product : products) {
-//                if (!product.getOffers().isEmpty()) {
-//                    for (Offer offer : product.getOffers()) {
-//                        if (offer.getUser().equals(user)) {
-//                            product.setPrice(offer.getAmount());
-//                        }
-//                    }
-//                }
-//            }
-//        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("products", products);
@@ -248,4 +286,6 @@ public class ProductService {
 
         return response;
     }
+
+
 }

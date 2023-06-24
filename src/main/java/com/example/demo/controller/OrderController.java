@@ -1,6 +1,10 @@
 package com.example.demo.controller;
 
+import com.example.demo.jsonView.MyJsonView;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,8 +23,13 @@ public class OrderController {
     }
 
     @GetMapping
-    public String index() {
-        return "page order";
+    @JsonView(MyJsonView.Order.class)
+    public ResponseEntity<?> listOrders() {
+        try {
+            return new ResponseEntity<>(orderService.getOrders(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

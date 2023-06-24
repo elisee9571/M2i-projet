@@ -14,7 +14,7 @@ public class Image {
     private Integer id;
 
     @Column(name = "url", unique = true)
-    @JsonView({MyJsonView.Product.class})
+    @JsonView({MyJsonView.Product.class, MyJsonView.Favorite.class})
     private String url;
 
     @Column(name = "type")
@@ -25,9 +25,10 @@ public class Image {
     @JoinColumn(name = "id_product")
     private Product product;
 
-    public Image(String url, String type) {
+    public Image(String url, String type, Product product) {
         this.url = url;
         this.type = type;
+        this.product = product;
     }
 
     public Image(){

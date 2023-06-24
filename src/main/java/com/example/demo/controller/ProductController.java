@@ -1,18 +1,18 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Category;
+import com.example.demo.enums.Status;
 import com.example.demo.jsonView.MyJsonView;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.demo.entity.Product;
 import com.example.demo.service.ProductService;
 
-@Controller
+@RestController
 @RequestMapping("/products")
 public class ProductController {
 
@@ -51,22 +51,32 @@ public class ProductController {
     public ResponseEntity<?> listProductsByUser(
             @PathVariable String pseudo,
             @RequestParam(value = "category", required = false) Category category,
-            @RequestParam(value = "price", required = false) String price,
+            @RequestParam(value = "sort", required = false) String sorted,
             @RequestParam("page") Integer pageNumber,
             @RequestParam("size") Integer pageSize
     ) {
         try {
-            return new ResponseEntity<>(productService.getProductsByUser(pseudo, category, price, pageNumber, pageSize), HttpStatus.OK);
+            return new ResponseEntity<>(productService.getProductsByUser(pseudo, category, sorted, pageNumber, pageSize), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
     @PostMapping
-    public ResponseEntity<String> create(@RequestBody Product product) {
+    public ResponseEntity<?> create(@ModelAttribute Product product) {
         try {
             productService.saveProduct(product);
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            return new ResponseEntity<>("Article crée", HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/draft")
+    public ResponseEntity<?> createProductStatusDraft(@ModelAttribute Product product) {
+        try {
+            productService.saveProductStatusDraft(product);
+            return new ResponseEntity<>("Article mis en brouillon", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -76,7 +86,24 @@ public class ProductController {
     public ResponseEntity<?> update(@PathVariable Integer id, @RequestBody Product product) {
         try {
             productService.updateProduct(product, id);
-            return new ResponseEntity<>("Produit mis à jour", HttpStatus.OK);
+            return new ResponseEntity<>("Article mis à jour", HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @PostMapping("/{id}")
+    public ResponseEntity<?> updateStatus(
+            @PathVariable Integer id,
+            @RequestParam("accept") boolean accept
+    ) {
+        try {
+            if(accept){
+                productService.updateProductStatus(id, Status.HIDE);
+            }else {
+                productService.updateProductStatus(id, Status.VISIBLE);
+            }
+            return new ResponseEntity<>("Article " + (accept ? "masqué" : "démasqué"), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -97,12 +124,12 @@ public class ProductController {
     public ResponseEntity<?> searchProducts(
             @RequestParam(value = "category", required = false) Category category,
             @RequestParam("keyword") String keyword,
-            @RequestParam(value = "price", required = false) String price,
+            @RequestParam(value = "sort", required = false) String sorted,
             @RequestParam("page") Integer pageNumber,
             @RequestParam("size") Integer pageSize
     ) {
         try {
-            return new ResponseEntity<>(productService.searchProductsByCategoryAndKeyword(category, keyword, price, pageNumber, pageSize), HttpStatus.OK);
+            return new ResponseEntity<>(productService.searchProductsByCategoryAndKeyword(category, keyword, sorted, pageNumber, pageSize), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
