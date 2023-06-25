@@ -1,9 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.config.token.JwtUtil;
-import com.example.demo.config.token.util.TokenAuthorization;
-import com.example.demo.entity.Category;
-import com.example.demo.entity.Order;
 import com.example.demo.entity.Product;
 import com.example.demo.entity.User;
 import com.example.demo.enums.Status;
@@ -11,28 +7,17 @@ import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.ProductService;
-import com.example.demo.service.UserService;
 import com.stripe.Stripe;
-import com.stripe.exception.AuthenticationException;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionCreateParams;
-import com.stripe.param.checkout.SessionListLineItemsParams;
-import com.stripe.param.checkout.SessionRetrieveParams;
-import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 public class StripePaymentController {
@@ -42,15 +27,18 @@ public class StripePaymentController {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
 
+    private final ProductService productService;
+
 
     public StripePaymentController(
             UserRepository userRepository,
             OrderRepository orderRepository,
-            ProductRepository productRepository
-    ) {
+            ProductRepository productRepository,
+            ProductService productService) {
         this.userRepository = userRepository;
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
+        this.productService = productService;
     }
 
     @PostMapping("/create-checkout-session")
@@ -61,7 +49,14 @@ public class StripePaymentController {
         Stripe.apiKey = "sk_test_51EJO9QJvBeCJjfk9vsTx3Q569vJAYt2QdKqAXhFrD5rg30BuWHm8LnZkb9almSyYVoDRlG1xqS6hhePqHEw1wwuD00AvrqvwoK";
         String YOUR_DOMAIN = "http://localhost:3001";
 
-        long priceInCents = (long) (product.getPrice() * 100);
+        Product myProduct = productService.getProductById(product.getId());
+        long priceInCents;
+
+        if(myProduct.getPriceOffer() != null){
+            priceInCents = (long) (myProduct.getPriceOffer() * 100);
+        }else {
+            priceInCents = (long) (myProduct.getPrice() * 100);
+        }
 
         SessionCreateParams params =
                 SessionCreateParams.builder()
@@ -79,10 +74,10 @@ public class StripePaymentController {
                         .addLineItem(
                                 SessionCreateParams.LineItem.builder()
                                         .setPriceData(SessionCreateParams.LineItem.PriceData.builder()
-                                                .setCurrency(product.getCurrencyCode().toString())
+                                                .setCurrency(myProduct.getCurrencyCode().toString())
                                                 .setProductData(SessionCreateParams.LineItem.PriceData.ProductData.builder()
-                                                        .setName(product.getTitle())
-                                                        .setDescription(String.valueOf(product.getId()))
+                                                        .setName(myProduct.getTitle())
+                                                        .setDescription(String.valueOf(myProduct.getId()))
                                                         .build())
                                                 .setUnitAmount(priceInCents)
                                                 .build())

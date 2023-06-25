@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/categories/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/offers/**").permitAll()
                 .requestMatchers( "/media/**").permitAll()
-                .requestMatchers( "/create-checkout-session").permitAll()
+                .requestMatchers( "/create-checkout-session").hasAnyRole("USER", "ADMIN")
                 .requestMatchers( "/webhook").permitAll()
                 .requestMatchers("/users/**").hasAnyRole("USER", "ADMIN")
                 .requestMatchers("/offers/**").hasAnyRole("USER", "ADMIN")

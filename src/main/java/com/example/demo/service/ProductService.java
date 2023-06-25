@@ -97,9 +97,9 @@ public class ProductService {
                 // L'utilisateur connecté est différent de l'utilisateur visité,
                 // donc afficher uniquement les produits avec le statut visible ou vendu
                 if (category == null) {
-                    productPage = productRepository.findByUserPseudoAndStatusIn(user.getPseudo(), Arrays.asList(Status.VISIBLE, Status.SOLD), pagination);
+                    productPage = productRepository.findByUserPseudoAndStatusIn(user.getPseudo(), Arrays.asList(Status.VISIBLE, Status.SOLD, Status.PENDING), pagination);
                 } else {
-                    productPage = productRepository.findByUserPseudoAndCategoryAndStatusIn(user.getPseudo(), category, Arrays.asList(Status.VISIBLE, Status.SOLD), pagination);
+                    productPage = productRepository.findByUserPseudoAndCategoryAndStatusIn(user.getPseudo(), category, Arrays.asList(Status.VISIBLE, Status.SOLD, Status.PENDING), pagination);
                 }
             }
         } else {
